@@ -1,5 +1,5 @@
-const CACHE_NAME = 'riftlist-v1';
-const APP_SHELL = ['./', './data/cards.json', './manifest.webmanifest'];
+const CACHE_NAME = 'riftlist-v2';
+const APP_SHELL = ['./', './data/cards.json', './favicon.svg', './manifest.webmanifest'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(APP_SHELL)));

@@ -21,7 +21,7 @@ Local thumbnails are required for reliable client-side PNG export. The original 
 
 The upstream snapshot can briefly lag newly released special printings. RiftList keeps narrowly scoped supplements in `src/catalog.ts` when a verified printing is missing, and automatically stops adding one when upstream begins supplying it.
 
-The current supplement is Vendetta `VEN-192*/166`, **Nasus, Curator of the Sands — Signed Showcase**. Its printing metadata is corroborated by the public [Rift Atlas entry](https://riftatlas.com/card/VEN-192S), and its bundled preview comes from the public [TCGplayer image](https://tcgplayer-cdn.tcgplayer.com/product/709304_in_1000x1000.jpg). The ordinary `VEN-192/166` artwork remains sourced through the normal Riot gallery pipeline.
+The current supplement is Vendetta `VEN-192*/166`, **Nasus, Curator of the Sands (Signed Showcase)**. Its printing metadata is corroborated by the public [Rift Atlas entry](https://riftatlas.com/card/VEN-192S), and its bundled preview comes from the public [TCGplayer image](https://tcgplayer-cdn.tcgplayer.com/product/709304_in_1000x1000.jpg). The ordinary `VEN-192/166` artwork remains sourced through the normal Riot gallery pipeline.
 
 ## Refresh policy
 

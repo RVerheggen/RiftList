@@ -30,7 +30,7 @@ function CardImage({ card, eager = false }: { card: Card; eager?: boolean }) {
       {!failed && (
         <img
           src={imageSource}
-          alt={`${card.name} — ${card.publicCode}`}
+          alt={`${card.name}, ${card.publicCode}`}
           loading={eager ? 'eager' : 'lazy'}
           onError={() => setFailed(true)}
         />
@@ -188,7 +188,7 @@ export default function App() {
         announce('PNG saved');
       }
     } catch (error) {
-      if ((error as DOMException).name !== 'AbortError') announce('Image export failed — try again');
+      if ((error as DOMException).name !== 'AbortError') announce('Image export failed. Try again');
     } finally {
       setExporting(false);
     }

@@ -2,7 +2,7 @@ import type { ParsedLine, VariantRequest } from './types';
 
 const VARIANT_ALIASES: Array<[RegExp, VariantRequest]> = [
   [/^(?:aa|alt|alternate(?:\s+art)?)$/i, 'alternate-art'],
-  [/^(?:(?:v(?:ersion)?\.?\s*\d+)\s*[-–—:]\s*)?(?:sig|signature|signed(?:\s+showcase)?)$/i, 'signed-showcase'],
+  [/^(?:(?:v(?:ersion)?\.?\s*\d+)\s*[-–:]\s*)?(?:sig|signature|signed(?:\s+showcase)?)$/i, 'signed-showcase'],
   [/^(?:on|overnumbered|overnumber)$/i, 'overnumbered'],
 ];
 
@@ -11,7 +11,7 @@ function readVariant(value: string): VariantRequest | undefined {
 }
 
 function cleanBullet(value: string) {
-  return value.trim().replace(/^(?:[-*+•‣▪–—]|\d+[.)])\s*/, '').trim();
+  return value.trim().replace(/^(?:[-*+•‣▪–]|\d+[.)])\s*/, '').trim();
 }
 
 export function parseCardLine(rawLine: string, lineNumber = 1): ParsedLine | null {

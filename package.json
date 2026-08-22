@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
-    "test": "node --test --experimental-strip-types tests/domain.test.mjs",
+    "test": "node --test --experimental-strip-types tests/domain.test.mjs tests/no-em-dash.test.mjs",
     "preview": "vite preview",
     "data:sync": "node scripts/sync-card-data.mjs"
   },

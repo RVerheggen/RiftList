@@ -165,8 +165,8 @@ export function cardVariantLabel(card: Card) {
 export function formatWantedText(items: WantedCard[], unmatched: MatchResult[]) {
   const lines = items.map(({ card, quantity }) => {
     const detail = [card.publicCode, cardVariantLabel(card)].filter(Boolean).join(' · ');
-    return `${quantity}x ${card.name}${detail ? ` — ${detail}` : ''}`;
+    return `${quantity}x ${card.name}${detail ? ` · ${detail}` : ''}`;
   });
-  const missing = unmatched.map(({ parsed }) => `${parsed.quantity}x ${parsed.name} — not matched`);
+  const missing = unmatched.map(({ parsed }) => `${parsed.quantity}x ${parsed.name} · not matched`);
   return ['RIFTBOUND WANTED', '', ...lines, ...(missing.length ? ['', 'UNMATCHED', ...missing] : [])].join('\n');
 }

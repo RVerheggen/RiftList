@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="RiftList">
+  <rect width="64" height="64" rx="14" fill="#151a17"/>
+  <path d="M15 10h34a5 5 0 0 1 5 5v34a5 5 0 0 1-5 5H15a5 5 0 0 1-5-5V15a5 5 0 0 1 5-5Z" fill="#f5f1e8" transform="rotate(-3 32 32)"/>
+  <path d="M13 46h38v5a4 4 0 0 1-4 4H17a4 4 0 0 1-4-4Z" fill="#ef623d" transform="rotate(-3 32 32)"/>
+  <text x="32" y="40" fill="#151a17" font-family="Arial, sans-serif" font-size="24" font-weight="900" letter-spacing="-2" text-anchor="middle">RL</text>
+</svg>
