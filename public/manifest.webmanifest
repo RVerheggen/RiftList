@@ -1,0 +1,9 @@
+{
+  "name": "RiftList — Riftbound wanted lists",
+  "short_name": "RiftList",
+  "description": "Create shareable Riftbound wanted-card sheets.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f4f1e9",
+  "theme_color": "#151a17"
+}
