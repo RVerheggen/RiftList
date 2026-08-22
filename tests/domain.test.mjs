@@ -1,0 +1,34 @@
+import assert from 'node:assert/strict';
+import test from 'node:test';
+import { readFile } from 'node:fs/promises';
+import { applyCatalogSupplements } from '../src/catalog.ts';
+import { cardVariantLabel, matchCard } from '../src/matcher.ts';
+import { parseCardLine, variantLabel } from '../src/parser.ts';
+
+const rawCatalog = JSON.parse(await readFile(new URL('../public/data/cards.json', import.meta.url), 'utf8'));
+const cards = applyCatalogSupplements(rawCatalog.cards);
+
+test('Sig requests the Signed Showcase printing by a shortened card name', () => {
+  const parsed = parseCardLine('1x Curator of the Sands (Sig)');
+  assert.ok(parsed);
+  assert.equal(parsed.variant, 'signed-showcase');
+
+  const result = matchCard(parsed, cards);
+  assert.equal(result.kind, 'exact');
+  assert.equal(result.card?.id, 'ven-192-star-166');
+  assert.equal(result.card?.publicCode, 'VEN-192*/166');
+  assert.equal(cardVariantLabel(result.card), 'Signed Showcase');
+});
+
+test('the full marketplace name and verbose variant note are understood', () => {
+  const parsed = parseCardLine('Nasus, Curator of the Sands (V.3 - Signed Showcase)');
+  assert.ok(parsed);
+  assert.equal(parsed.variant, 'signed-showcase');
+  assert.equal(matchCard(parsed, cards).card?.id, 'ven-192-star-166');
+});
+
+test('variant labels use the intended display capitalization', () => {
+  assert.equal(variantLabel('alternate-art'), 'Alternate art');
+  assert.equal(variantLabel('signed-showcase'), 'Signed Showcase');
+  assert.equal(variantLabel('overnumbered'), 'Overnumbered');
+});

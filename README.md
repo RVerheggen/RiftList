@@ -6,7 +6,7 @@ RiftList is a static, mobile-first Riftbound trade-list maker. Paste a wanted li
 
 - Quantities before or after names: `2x Ahri, Alluring` and `Ahri, Alluring 2x`
 - Bullets, blank lines, inconsistent spacing/casing, and small typos
-- Variant aliases: `(AA)` / `alt`, `(Sig)`, and `(ON)`
+- Variant aliases: `(AA)` / `alt` for Alternate art, `(Sig)` for Signed Showcase, and `(ON)` for Overnumbered
 - Exact Riftbound card codes and full IDs
 - Clear unmatched feedback with likely-name suggestions
 - Grid, list, and compact share layouts

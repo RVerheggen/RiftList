@@ -12,6 +12,7 @@ export interface Card {
   isAltArt: boolean;
   isSigned: boolean;
   isVariant: boolean;
+  aliases?: string[];
   imageUrl: string;
   imagePath: string;
 }
@@ -22,7 +23,7 @@ export interface CardCatalog {
   cards: Card[];
 }
 
-export type VariantRequest = 'alternate-art' | 'signature' | 'overnumbered';
+export type VariantRequest = 'alternate-art' | 'signed-showcase' | 'overnumbered';
 
 export interface ParsedLine {
   lineNumber: number;

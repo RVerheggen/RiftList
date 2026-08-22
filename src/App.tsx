@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { applyCatalogSupplements } from './catalog';
 import { createWantedImage, downloadWantedImage } from './exporter';
 import { aggregateMatches, cardVariantLabel, formatWantedText, matchCardList } from './matcher';
 import { parseCardList } from './parser';
@@ -95,7 +96,7 @@ export default function App() {
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         return response.json() as Promise<CardCatalog>;
       })
-      .then((data) => setCatalog(data))
+      .then((data) => setCatalog({ ...data, cards: applyCatalogSupplements(data.cards) }))
       .catch(() => setCatalogError('The bundled card catalog could not be loaded.'));
 
     const handleOnline = () => setOnline(navigator.onLine);
@@ -147,7 +148,7 @@ export default function App() {
   const applySuggestion = (result: MatchResult, card: Card) => {
     const lines = input.split(/\r?\n/);
     const suffix = result.parsed.variant === 'alternate-art' ? ' (AA)'
-      : result.parsed.variant === 'signature' ? ' (Sig)'
+      : result.parsed.variant === 'signed-showcase' ? ' (Sig)'
       : result.parsed.variant === 'overnumbered' ? ' (ON)' : '';
     lines[result.parsed.lineNumber - 1] = `${result.parsed.quantity}x ${card.name}${suffix}`;
     const updated = lines.join('\n');
@@ -237,10 +238,10 @@ export default function App() {
 
           <div className="how-it-works" aria-label="Supported list formats">
             <span>Also understood</span>
-            <div><b>AA</b> alternate art</div>
-            <div><b>Sig</b> signature</div>
-            <div><b>ON</b> overnumbered</div>
-            <div><b>OGN-202</b> card code</div>
+            <div><b>AA</b> Alternate art</div>
+            <div><b>Sig</b> Signed Showcase</div>
+            <div><b>ON</b> Overnumbered</div>
+            <div><b>OGN-202</b> Card code</div>
           </div>
         </div>
 

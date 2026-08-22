@@ -2,7 +2,7 @@ import type { ParsedLine, VariantRequest } from './types';
 
 const VARIANT_ALIASES: Array<[RegExp, VariantRequest]> = [
   [/^(?:aa|alt|alternate(?:\s+art)?)$/i, 'alternate-art'],
-  [/^(?:sig|signature|signed)$/i, 'signature'],
+  [/^(?:(?:v(?:ersion)?\.?\s*\d+)\s*[-–—:]\s*)?(?:sig|signature|signed(?:\s+showcase)?)$/i, 'signed-showcase'],
   [/^(?:on|overnumbered|overnumber)$/i, 'overnumbered'],
 ];
 
@@ -32,7 +32,7 @@ export function parseCardLine(rawLine: string, lineNumber = 1): ParsedLine | nul
   }
 
   let trailingVariant: VariantRequest | undefined;
-  const variantSuffix = value.match(/\s+(aa|alt|alternate\s+art|sig|signature|signed|on|overnumbered|overnumber)\s*$/i);
+  const variantSuffix = value.match(/\s+(aa|alt|alternate\s+art|sig|signature|signed(?:\s+showcase)?|on|overnumbered|overnumber)\s*$/i);
   if (variantSuffix) {
     trailingVariant = readVariant(variantSuffix[1]);
     value = value.slice(0, variantSuffix.index).trim();
@@ -61,8 +61,8 @@ export function parseCardList(value: string): ParsedLine[] {
 }
 
 export function variantLabel(variant?: VariantRequest) {
-  if (variant === 'alternate-art') return 'Alternate Art';
-  if (variant === 'signature') return 'Signature';
+  if (variant === 'alternate-art') return 'Alternate art';
+  if (variant === 'signed-showcase') return 'Signed Showcase';
   if (variant === 'overnumbered') return 'Overnumbered';
   return undefined;
 }

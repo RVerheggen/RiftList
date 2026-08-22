@@ -1,4 +1,5 @@
 import type { Card, MatchResult, ParsedLine, WantedCard } from './types';
+import { variantLabel } from './parser.ts';
 
 export function normalize(value: string) {
   return value
@@ -24,9 +25,21 @@ function isOvernumbered(card: Card) {
 
 function hasRequestedVariant(card: Card, parsed: ParsedLine) {
   if (parsed.variant === 'alternate-art') return card.isAltArt;
-  if (parsed.variant === 'signature') return card.isSigned;
+  if (parsed.variant === 'signed-showcase') return card.isSigned;
   if (parsed.variant === 'overnumbered') return isOvernumbered(card);
   return true;
+}
+
+function cardNames(card: Card) {
+  return [card.name, ...(card.aliases ?? [])];
+}
+
+function hasExactName(card: Card, normalizedName: string) {
+  return cardNames(card).some((name) => normalize(name) === normalizedName);
+}
+
+function bestNameSimilarity(card: Card, normalizedName: string) {
+  return Math.max(...cardNames(card).map((name) => similarity(normalizedName, normalize(name))));
 }
 
 function matchesSet(card: Card, setHint?: string) {
@@ -87,12 +100,12 @@ export function matchCard(parsed: ParsedLine, cards: Card[]): MatchResult {
   const normalizedName = normalize(parsed.name);
   const normalizedInputId = normalizeId(parsed.name);
   const idMatches = cards.filter((card) => [card.id, card.code, card.publicCode].some((id) => normalizeId(id) === normalizedInputId));
-  const exactMatches = idMatches.length ? idMatches : cards.filter((card) => normalize(card.name) === normalizedName);
+  const exactMatches = idMatches.length ? idMatches : cards.filter((card) => hasExactName(card, normalizedName));
 
   if (exactMatches.length) {
     const card = preferPrinting(exactMatches, parsed);
     if (card) return { parsed, card, kind: 'exact', suggestions: [] };
-    const requested = parsed.variant ? parsed.variant.replace('-', ' ') : parsed.setHint;
+    const requested = parsed.variant ? variantLabel(parsed.variant) : parsed.setHint;
     return {
       parsed,
       kind: 'unmatched',
@@ -102,7 +115,7 @@ export function matchCard(parsed: ParsedLine, cards: Card[]): MatchResult {
   }
 
   const ranked = uniqueNames(cards)
-    .map((card) => ({ card, score: similarity(normalizedName, normalize(card.name)) }))
+    .map((card) => ({ card, score: bestNameSimilarity(card, normalizedName) }))
     .sort((left, right) => right.score - left.score || left.card.name.localeCompare(right.card.name));
 
   const bestName = ranked[0];
@@ -143,8 +156,8 @@ export function aggregateMatches(results: MatchResult[]): WantedCard[] {
 }
 
 export function cardVariantLabel(card: Card) {
-  if (card.isSigned) return 'Signature';
-  if (card.isAltArt) return 'Alternate Art';
+  if (card.isSigned) return 'Signed Showcase';
+  if (card.isAltArt) return 'Alternate art';
   if (isOvernumbered(card)) return 'Overnumbered';
   return undefined;
 }
