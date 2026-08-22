@@ -35,6 +35,16 @@ function drawPlaceholder(context: CanvasRenderingContext2D, x: number, y: number
   }
 }
 
+function drawCardArt(context: CanvasRenderingContext2D, image: HTMLImageElement | null, x: number, y: number, width: number, height: number) {
+  if (!image) {
+    drawPlaceholder(context, x, y, width, height);
+    return;
+  }
+  context.fillStyle = COLORS.ink;
+  context.fillRect(x, y, width, height);
+  drawContained(context, image, x, y, width, height);
+}
+
 async function loadImage(url: string) {
   return new Promise<HTMLImageElement | null>((resolve) => {
     const image = new Image();
@@ -94,8 +104,8 @@ async function renderGrid(items: WantedCard[], images: Array<HTMLImageElement | 
   const gap = 24;
   const side = 54;
   const tileWidth = (width - side * 2 - gap * (columns - 1)) / columns;
-  const artHeight = 411;
-  const tileHeight = 483;
+  const artHeight = Math.round(tileWidth * 1039 / 744);
+  const tileHeight = artHeight + 72;
   const rows = Math.ceil(items.length / columns);
   const height = 164 + 40 + rows * tileHeight + Math.max(0, rows - 1) * gap + 96;
   const canvas = document.createElement('canvas');
@@ -117,9 +127,8 @@ async function renderGrid(items: WantedCard[], images: Array<HTMLImageElement | 
     context.save();
     roundedRect(context, x, y, tileWidth, artHeight, 12);
     context.clip();
-    drawPlaceholder(context, x, y, tileWidth, artHeight);
     const image = images[index];
-    if (image) drawContained(context, image, x, y, tileWidth, artHeight);
+    drawCardArt(context, image, x, y, tileWidth, artHeight);
     context.restore();
 
     roundedRect(context, x + tileWidth - 66, y + 12, 52, 40, 20);
@@ -177,9 +186,8 @@ async function renderList(items: WantedCard[], images: Array<HTMLImageElement | 
     context.save();
     roundedRect(context, x, y, thumbnailWidth, thumbnailHeight, 8);
     context.clip();
-    drawPlaceholder(context, x, y, thumbnailWidth, thumbnailHeight);
     const image = images[index];
-    if (image) drawContained(context, image, x, y, thumbnailWidth, thumbnailHeight);
+    drawCardArt(context, image, x, y, thumbnailWidth, thumbnailHeight);
     context.restore();
 
     const textX = x + thumbnailWidth + (compact ? 18 : 28);
