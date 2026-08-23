@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { readFile } from 'node:fs/promises';
 import { applyCatalogSupplements } from '../src/catalog.ts';
-import { cardVariantLabel, matchCard } from '../src/matcher.ts';
+import { cardVariantLabel, formatWantedText, matchCard } from '../src/matcher.ts';
 import { parseCardLine, variantLabel } from '../src/parser.ts';
 
 const rawCatalog = JSON.parse(await readFile(new URL('../public/data/cards.json', import.meta.url), 'utf8'));
@@ -53,4 +53,13 @@ test('bare quantities preserve variant notes and x quantities remain supported',
   assert.equal(bare?.variant, 'alternate-art');
   assert.equal(withX?.quantity, 2);
   assert.equal(withX?.variant, 'alternate-art');
+});
+
+test('plain-text wanted lists use the shared output title', () => {
+  const card = cards.find((candidate) => candidate.name === 'Ferrous Forerunner');
+  assert.ok(card);
+
+  const output = formatWantedText([{ card, quantity: 2, fuzzySources: [] }], []);
+  assert.equal(output.split('\n')[0], 'Riftbound wanted list');
+  assert.match(output, /2x Ferrous Forerunner/);
 });

@@ -168,5 +168,5 @@ export function formatWantedText(items: WantedCard[], unmatched: MatchResult[]) 
     return `${quantity}x ${card.name}${detail ? ` · ${detail}` : ''}`;
   });
   const missing = unmatched.map(({ parsed }) => `${parsed.quantity}x ${parsed.name} · not matched`);
-  return ['RIFTBOUND WANTED', '', ...lines, ...(missing.length ? ['', 'UNMATCHED', ...missing] : [])].join('\n');
+  return ['Riftbound wanted list', '', ...lines, ...(missing.length ? ['', 'UNMATCHED', ...missing] : [])].join('\n');
 }

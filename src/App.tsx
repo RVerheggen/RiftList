@@ -205,7 +205,7 @@ export default function App() {
       const nativeShare = Reflect.get(navigator, 'share') as ((data: ShareData) => Promise<void>) | undefined;
       const nativeCanShare = Reflect.get(navigator, 'canShare') as ((data: ShareData) => boolean) | undefined;
       if (share && nativeShare && (!nativeCanShare || nativeCanShare.call(navigator, { files: [file] }))) {
-        await nativeShare.call(navigator, { files: [file], title: 'My Riftbound wanted list', text: 'My Riftbound wanted list' });
+        await nativeShare.call(navigator, { files: [file], title: 'Riftbound wanted list', text: plainText });
         announce('Share sheet opened');
       } else {
         downloadWantedImage(blob);
