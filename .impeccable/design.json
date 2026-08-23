@@ -1,0 +1,198 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-23T15:40:00.000Z",
+  "title": "Design System: RiftList",
+  "extensions": {
+    "colorMeta": {
+      "signal-orange": {
+        "role": "primary",
+        "displayName": "Signal Orange",
+        "canonical": "#ef623d",
+        "tonalRamp": ["oklch(15% 0.16 36)", "oklch(26% 0.16 36)", "oklch(38% 0.16 36)", "oklch(50% 0.16 36)", "oklch(62% 0.16 36)", "oklch(74% 0.16 36)", "oklch(86% 0.16 36)", "oklch(95% 0.16 36)"]
+      },
+      "signal-orange-deep": {
+        "role": "primary",
+        "displayName": "Signal Orange Deep",
+        "canonical": "#da5130",
+        "tonalRamp": ["oklch(15% 0.15 36)", "oklch(26% 0.15 36)", "oklch(38% 0.15 36)", "oklch(50% 0.15 36)", "oklch(62% 0.15 36)", "oklch(74% 0.15 36)", "oklch(86% 0.15 36)", "oklch(95% 0.15 36)"]
+      },
+      "warm-ivory": {
+        "role": "neutral",
+        "displayName": "Warm Ivory",
+        "canonical": "#f4f1e9",
+        "tonalRamp": ["oklch(15% 0.012 90)", "oklch(26% 0.012 90)", "oklch(38% 0.012 90)", "oklch(50% 0.012 90)", "oklch(62% 0.012 90)", "oklch(74% 0.012 90)", "oklch(86% 0.012 90)", "oklch(95% 0.012 90)"]
+      },
+      "paper-white": {
+        "role": "neutral",
+        "displayName": "Paper White",
+        "canonical": "#fffefa",
+        "tonalRamp": ["oklch(15% 0.008 90)", "oklch(26% 0.008 90)", "oklch(38% 0.008 90)", "oklch(50% 0.008 90)", "oklch(62% 0.008 90)", "oklch(74% 0.008 90)", "oklch(86% 0.008 90)", "oklch(95% 0.008 90)"]
+      },
+      "deep-forest": {
+        "role": "neutral",
+        "displayName": "Deep Forest",
+        "canonical": "#171e1a",
+        "tonalRamp": ["oklch(15% 0.025 150)", "oklch(26% 0.025 150)", "oklch(38% 0.025 150)", "oklch(50% 0.025 150)", "oklch(62% 0.025 150)", "oklch(74% 0.025 150)", "oklch(86% 0.025 150)", "oklch(95% 0.025 150)"]
+      },
+      "stone-canvas": {
+        "role": "neutral",
+        "displayName": "Stone Canvas",
+        "canonical": "#e4e1d8",
+        "tonalRamp": ["oklch(15% 0.012 90)", "oklch(26% 0.012 90)", "oklch(38% 0.012 90)", "oklch(50% 0.012 90)", "oklch(62% 0.012 90)", "oklch(74% 0.012 90)", "oklch(86% 0.012 90)", "oklch(95% 0.012 90)"]
+      },
+      "near-black-ink": {
+        "role": "neutral",
+        "displayName": "Near-Black Ink",
+        "canonical": "#152019",
+        "tonalRamp": ["oklch(15% 0.025 150)", "oklch(26% 0.025 150)", "oklch(38% 0.025 150)", "oklch(50% 0.025 150)", "oklch(62% 0.025 150)", "oklch(74% 0.025 150)", "oklch(86% 0.025 150)", "oklch(95% 0.025 150)"]
+      },
+      "muted-ink": {
+        "role": "neutral",
+        "displayName": "Muted Ink",
+        "canonical": "#657068",
+        "tonalRamp": ["oklch(15% 0.02 150)", "oklch(26% 0.02 150)", "oklch(38% 0.02 150)", "oklch(50% 0.02 150)", "oklch(62% 0.02 150)", "oklch(74% 0.02 150)", "oklch(86% 0.02 150)", "oklch(95% 0.02 150)"]
+      },
+      "divider": {
+        "role": "neutral",
+        "displayName": "Divider",
+        "canonical": "#d7d4ca",
+        "tonalRamp": ["oklch(15% 0.01 90)", "oklch(26% 0.01 90)", "oklch(38% 0.01 90)", "oklch(50% 0.01 90)", "oklch(62% 0.01 90)", "oklch(74% 0.01 90)", "oklch(86% 0.01 90)", "oklch(95% 0.01 90)"]
+      },
+      "badge-surface": {
+        "role": "neutral",
+        "displayName": "Badge Surface",
+        "canonical": "#eae7de",
+        "tonalRamp": ["oklch(15% 0.012 90)", "oklch(26% 0.012 90)", "oklch(38% 0.012 90)", "oklch(50% 0.012 90)", "oklch(62% 0.012 90)", "oklch(74% 0.012 90)", "oklch(86% 0.012 90)", "oklch(95% 0.012 90)"]
+      },
+      "badge-ink": {
+        "role": "neutral",
+        "displayName": "Badge Ink",
+        "canonical": "#334039",
+        "tonalRamp": ["oklch(15% 0.025 150)", "oklch(26% 0.025 150)", "oklch(38% 0.025 150)", "oklch(50% 0.025 150)", "oklch(62% 0.025 150)", "oklch(74% 0.025 150)", "oklch(86% 0.025 150)", "oklch(95% 0.025 150)"]
+      }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Editorial Display", "purpose": "Main task statement and identity-bearing copy." },
+      "headline": { "displayName": "Wanted Headline", "purpose": "Share-board and export headlines." },
+      "title": { "displayName": "Utility Title", "purpose": "Preview counts and prominent actions." },
+      "body": { "displayName": "Body", "purpose": "Short explanations and guidance." },
+      "label": { "displayName": "Utility Label", "purpose": "Uppercase eyebrows and compact markers." },
+      "mono": { "displayName": "List Mono", "purpose": "Pasted lists and plain-text output." }
+    },
+    "shadows": [
+      { "name": "input-ambient", "value": "0 7px 24px rgba(27, 35, 29, .05)", "purpose": "Quiet separation for the pasted-list field." },
+      { "name": "action-glow", "value": "0 8px 20px rgba(239, 98, 61, .2)", "purpose": "Limited to the primary match action." },
+      { "name": "selected-control", "value": "0 1px 4px rgba(20, 25, 22, .1)", "purpose": "Marks the active output-style segment." },
+      { "name": "board-offset", "value": "12px 14px 0 rgba(28, 35, 30, .11)", "purpose": "Creates the signature structural layer under the share artifact." },
+      { "name": "quantity-badge", "value": "0 2px 8px rgba(0, 0, 0, .35)", "purpose": "Maintains count readability over artwork." },
+      { "name": "toast-lift", "value": "0 10px 32px rgba(0, 0, 0, .22)", "purpose": "Separates temporary feedback from the page." }
+    ],
+    "motion": [
+      { "name": "feedback-standard", "value": "160ms ease", "purpose": "Toast opacity and position transition, disabled when reduced motion is requested." },
+      { "name": "mobile-preview-scroll", "value": "smooth scroll", "purpose": "Moves phone users from matching to the preview, disabled when reduced motion is requested." }
+    ],
+    "breakpoints": [
+      { "name": "stack-workspace", "value": "900px" },
+      { "name": "phone", "value": "560px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Match Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The full-width Signal Orange action that advances the user from paste to preview.",
+      "html": "<button class=\"ds-btn-primary\" type=\"button\">Match cards <span aria-hidden=\"true\">→</span></button>",
+      "css": ".ds-btn-primary { width: 100%; display: flex; justify-content: center; gap: 10px; padding: 15px 20px; border: 0; border-radius: 10px; background: #ef623d; color: #fff; font: 850 16px Inter, ui-sans-serif, system-ui, sans-serif; box-shadow: 0 8px 20px rgba(239,98,61,.2); cursor: pointer; } .ds-btn-primary:hover { background: #da5130; } .ds-btn-primary:focus-visible { outline: 3px solid rgba(239,98,61,.34); outline-offset: 2px; }"
+    },
+    {
+      "name": "Dark Export Button",
+      "kind": "button",
+      "refersTo": "button-dark",
+      "description": "The final save action, visually tied to the Deep Forest share board.",
+      "html": "<button class=\"ds-btn-dark\" type=\"button\">Save PNG</button>",
+      "css": ".ds-btn-dark { padding: 13px 22px; border: 1px solid #202923; border-radius: 9px; background: #202923; color: #fff; font: 800 16px Inter, ui-sans-serif, system-ui, sans-serif; cursor: pointer; } .ds-btn-dark:hover { background: #303a34; } .ds-btn-dark:focus-visible { outline: 3px solid rgba(239,98,61,.34); outline-offset: 2px; }"
+    },
+    {
+      "name": "Wanted List Input",
+      "kind": "input",
+      "refersTo": "input-list",
+      "description": "A generous paper field designed for messy multiline card input.",
+      "html": "<textarea class=\"ds-list-input\" rows=\"5\">1x Ferrous Forerunner\nAshe, Focused 2</textarea>",
+      "css": ".ds-list-input { width: 100%; min-height: 150px; resize: vertical; padding: 18px; border: 1px solid #bebdb5; border-radius: 12px; background: #fffefa; color: #1d2520; font: 600 15px/1.65 ui-monospace, SFMono-Regular, Menlo, monospace; box-shadow: 0 7px 24px rgba(27,35,29,.05); } .ds-list-input:focus { border-color: #ef623d; outline: 3px solid rgba(239,98,61,.12); outline-offset: 0; }"
+    },
+    {
+      "name": "Format Badge",
+      "kind": "chip",
+      "refersTo": "format-badge",
+      "description": "Compact shorthand or card-code notation with enough padding for longer codes.",
+      "html": "<span class=\"ds-format-badge\">OGN-202</span>",
+      "css": ".ds-format-badge { display: inline-grid; min-width: 31px; height: 23px; padding: 0 8px; place-items: center; border: 1px solid #cbc8bd; border-radius: 5px; background: #eae7de; color: #334039; font: 700 9px Inter, ui-sans-serif, system-ui, sans-serif; white-space: nowrap; }"
+    },
+    {
+      "name": "Catalog Status",
+      "kind": "chip",
+      "refersTo": "status-pill",
+      "description": "A quiet topbar status showing catalog readiness without competing with the task.",
+      "html": "<span class=\"ds-status\"><i aria-hidden=\"true\"></i>1,181 cards · ready</span>",
+      "css": ".ds-status { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border: 1px solid #d5d2c8; border-radius: 999px; background: rgba(255,255,255,.48); color: #536058; font: 700 12px Inter, ui-sans-serif, system-ui, sans-serif; } .ds-status i { width: 7px; height: 7px; border-radius: 50%; background: #41a36b; box-shadow: 0 0 0 3px #dcecdf; }"
+    },
+    {
+      "name": "Output Style Control",
+      "kind": "custom",
+      "refersTo": "segmented-control",
+      "description": "A compact three-option selector with a paper-white active tile.",
+      "html": "<div class=\"ds-segmented\"><button class=\"ds-active\">Grid</button><button>List</button><button>Compact</button></div>",
+      "css": ".ds-segmented { display: inline-flex; padding: 3px; border: 1px solid #cecbc2; border-radius: 9px; background: #f1eee6; } .ds-segmented button { padding: 7px 10px; border: 0; border-radius: 6px; background: transparent; color: #69726c; font: 800 11px Inter, ui-sans-serif, system-ui, sans-serif; } .ds-segmented .ds-active { background: #fff; color: #1c241f; box-shadow: 0 1px 4px rgba(20,25,22,.1); } .ds-segmented button:focus-visible { outline: 3px solid rgba(239,98,61,.34); outline-offset: 2px; }"
+    },
+    {
+      "name": "Wanted Board",
+      "kind": "card",
+      "refersTo": "wanted-board",
+      "description": "The signature dark trade artifact shared by the web preview and PNG export.",
+      "html": "<section class=\"ds-wanted-board\"><header><strong>WANTED</strong><span>3 UNIQUE</span></header><div class=\"ds-board-line\"></div><p>RIFTBOUND TRADE LIST</p><footer>MADE WITH RIFTLIST <span>READY TO TRADE</span></footer></section>",
+      "css": ".ds-wanted-board { padding: 34px; border: 1px solid #1d2621; border-radius: 5px; background: #171e1a; color: #fff; box-shadow: 12px 14px 0 rgba(28,35,30,.11); font-family: Inter, ui-sans-serif, system-ui, sans-serif; } .ds-wanted-board header, .ds-wanted-board footer { display: flex; justify-content: space-between; align-items: center; } .ds-wanted-board header strong { color: #ff774f; font: 900 29px Georgia, serif; letter-spacing: .06em; } .ds-wanted-board header span, .ds-wanted-board p, .ds-wanted-board footer { color: #99a39c; font-size: 9px; letter-spacing: .12em; text-transform: uppercase; } .ds-board-line { margin: 14px 0 20px; border-top: 1px solid #3b453f; } .ds-wanted-board footer { margin-top: 24px; padding-top: 12px; border-top: 1px solid #3b453f; }"
+    },
+    {
+      "name": "Unmatched Notice",
+      "kind": "card",
+      "refersTo": "unmatched-panel",
+      "description": "A warm, approachable review panel for uncertain or missing card matches.",
+      "html": "<section class=\"ds-unmatched\"><span class=\"ds-warning\">!</span><div><strong>Needs a look</strong><small>No confident card match found.</small></div></section>",
+      "css": ".ds-unmatched { display: flex; align-items: flex-start; gap: 10px; padding: 19px; border: 1px solid #d2aa9f; border-radius: 10px; background: #fff7f3; color: #47312b; font-family: Inter, ui-sans-serif, system-ui, sans-serif; } .ds-unmatched strong, .ds-unmatched small { display: block; } .ds-unmatched strong { font-size: 13px; } .ds-unmatched small { margin-top: 3px; color: #946f64; font-size: 10px; } .ds-warning { width: 22px; height: 22px; display: grid; flex: 0 0 auto; place-items: center; border-radius: 50%; background: #ef623d; color: #fff; font-size: 11px; font-weight: 900; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Collector's Trade Desk",
+    "overview": "RiftList should feel like a well-kept card-shop counter prepared for a trade session: warm paper under hand, an orderly dark binder surface for the cards, and one controlled signal color for decisive actions. The interface is calm, editorial, and organized. It gives card artwork room to carry energy while the surrounding application remains composed.\n\nThe system is practical without becoming generic. Editorial serif headlines create identity, compact utility labels keep the tool efficient, and small physical details such as borders, clipped card frames, badges, and the offset board shadow make the static interface feel touchable. The overall depth model is mostly flat and selectively structural.",
+    "keyCharacteristics": [
+      "Warm paper workspace paired with a deep green-black trade surface",
+      "Editorial serif display type with compact sans-serif utility copy",
+      "Signal Orange reserved for actions, warnings, quantities, and short labels",
+      "Mobile-first stacking with dense but legible card presentation",
+      "Soft, approachable controls with restrained physical depth"
+    ],
+    "rules": [
+      { "name": "The Controlled Signal Rule", "body": "Signal Orange marks the next action or the most important card-list fact. Do not spread it across large backgrounds or routine controls.", "section": "colors" },
+      { "name": "The Dark Board Rule", "body": "Deep Forest belongs to the share artifact and its strongest action, not to every container in the application.", "section": "colors" },
+      { "name": "The Two Voices Rule", "body": "Use serif type for identity-bearing statements and wanted-sheet headlines. Use sans-serif or monospace for every operational task.", "section": "typography" },
+      { "name": "The Paste-to-Share Rule", "body": "On mobile, preserve the exact vertical workflow: input, match, preview, review, export.", "section": "layout" },
+      { "name": "The One Strong Shadow Rule", "body": "Only the wanted board may use a hard offset shadow. All other elevation remains soft and low-contrast.", "section": "elevation" },
+      { "name": "The Quiet Corners Rule", "body": "Use moderate radii that soften controls without turning every surface into a pill.", "section": "shapes" }
+    ],
+    "dos": [
+      "Do let card artwork provide most of the saturated color.",
+      "Do keep Signal Orange rare and action-oriented.",
+      "Do preserve the warm-paper and deep-board contrast across web and exported images.",
+      "Do maintain the mobile paste-to-share sequence and full-width phone actions.",
+      "Do use borders and tonal changes before adding new shadows."
+    ],
+    "donts": [
+      "Don't turn RiftList into a glossy esports dashboard with neon glows, glass panels, or game-HUD chrome.",
+      "Don't use ornate fantasy frames, decorative runes, or lore-heavy interface ornament.",
+      "Don't flatten the product into a generic SaaS dashboard of interchangeable white cards and blue buttons.",
+      "Don't apply serif type to operational controls or dense metadata.",
+      "Don't introduce large accent-colored surfaces or additional competing accent hues."
+    ]
+  }
+}
