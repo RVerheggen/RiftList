@@ -28,3 +28,11 @@ yarn-error.log*
 # deployment output
 /dist/
 *.tsbuildinfo
+
+# local agent tooling
+/.agents/
+/.codex/
+/.github/agents/
+/.github/hooks/
+/.github/skills/
+/.impeccable/
