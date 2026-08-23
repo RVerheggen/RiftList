@@ -32,3 +32,25 @@ test('variant labels use the intended display capitalization', () => {
   assert.equal(variantLabel('signed-showcase'), 'Signed Showcase');
   assert.equal(variantLabel('overnumbered'), 'Overnumbered');
 });
+
+test('quantities work before or after a card name without an x', () => {
+  const leading = parseCardLine('2 Decree of Rage');
+  const trailing = parseCardLine('Decree of Rage 2');
+
+  assert.equal(leading?.quantity, 2);
+  assert.equal(leading?.name, 'Decree of Rage');
+  assert.equal(trailing?.quantity, 2);
+  assert.equal(trailing?.name, 'Decree of Rage');
+  assert.equal(matchCard(leading, cards).kind, 'exact');
+  assert.equal(matchCard(trailing, cards).kind, 'exact');
+});
+
+test('bare quantities preserve variant notes and x quantities remain supported', () => {
+  const bare = parseCardLine('2 Nasus, Ascended (AA)');
+  const withX = parseCardLine('Nasus, Ascended (AA) 2x');
+
+  assert.equal(bare?.quantity, 2);
+  assert.equal(bare?.variant, 'alternate-art');
+  assert.equal(withX?.quantity, 2);
+  assert.equal(withX?.variant, 'alternate-art');
+});

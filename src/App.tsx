@@ -228,7 +228,7 @@ export default function App() {
             placeholder={'1x Ferrous Forerunner\n- Ashe, Focused 2x\n1x Nasus, Ascended (AA)'}
           />
           <div className="helper-row">
-            <span>Formats: <code>2x Ahri, Alluring</code> · <code>Jinx (AA) 1x</code></span>
+            <span>Formats: <code>2 Ahri, Alluring</code> · <code>Jinx (AA) 2</code> · <code>1x Annie</code></span>
             <button type="button" onClick={() => setInput('')}>Clear</button>
           </div>
           <button className="primary-button" type="button" onClick={matchCards} disabled={!catalog || !parsedDraft.length}>

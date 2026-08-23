@@ -4,7 +4,7 @@ RiftList is a static, mobile-first Riftbound trade-list maker. Paste a wanted li
 
 ## Features
 
-- Quantities before or after names: `2x Ahri, Alluring` and `Ahri, Alluring 2x`
+- Quantities before or after names, with or without `x`: `2 Ahri, Alluring`, `Ahri, Alluring 2`, and `2x Ahri, Alluring`
 - Bullets, blank lines, inconsistent spacing/casing, and small typos
 - Variant aliases: `(AA)` / `alt` for Alternate art, `(Sig)` for Signed Showcase, and `(ON)` for Overnumbered
 - Exact Riftbound card codes and full IDs
@@ -51,18 +51,8 @@ The included workflow at `.github/workflows/deploy-pages.yml` builds and deploys
 
 Vite uses relative asset paths (`base: './'`), so the same build works for both an account-level Pages site and a repository subpath such as `/RiftList/`.
 
-## Reference-project findings
-
-The read-only `WhatsApp Riftbound Bot` project established several useful techniques that are retained here without carrying over its server/Baileys structure:
-
-- Normalize Unicode, punctuation, whitespace, casing, and convenient card-ID forms before matching.
-- Try exact names/IDs first, then rank fuzzy candidates and keep suggestions for misses.
-- Expand player shorthand such as `AA`, `alt`, `Sig`, and `ON` before selecting a printing.
-- Prefer a base printing unless the user explicitly asks for a variant.
-- Treat upstream data shapes defensively and cache card-image work.
-
-RiftList applies those ideas entirely in the browser against a bundled snapshot.
-
 ## Legal
+
+RiftList source code is available under the [MIT License](./LICENSE). This license covers RiftList's original code only. It does not grant rights to third-party card data, images, names, or trademarks.
 
 RiftList is an unofficial, non-commercial fan tool and is not affiliated with or endorsed by Riot Games. Riftbound, card names, card data, artwork, and trademarks are property of Riot Games. The bundled dataset and thumbnails are provided for community-tool functionality; review the source policies in [DATA_SOURCES.md](./DATA_SOURCES.md) before redistributing or commercializing the project.

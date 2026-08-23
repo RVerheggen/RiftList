@@ -1,6 +1,7 @@
 {
   "name": "riftlist",
   "version": "0.1.0",
+  "license": "MIT",
   "private": true,
   "packageManager": "pnpm@11.19.0",
   "engines": {

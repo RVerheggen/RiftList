@@ -33,4 +33,4 @@ Run `pnpm run data:sync` when a new set or gallery update lands, review the resu
 
 ## Rights and attribution
 
-The dataset pipeline code is published by its author under its repository terms. Card names, rules data, artwork, and trademarks remain Riot Games property and are not relicensed by RiftList. RiftList is an unofficial, non-commercial fan project and is not endorsed by Riot Games.
+The RiftList [MIT License](./LICENSE) covers RiftList's original source code only. The dataset pipeline code is published by its author under its repository terms. Card names, rules data, artwork, and trademarks remain Riot Games property and are not relicensed by RiftList. RiftList is an unofficial, non-commercial fan project and is not endorsed by Riot Games.

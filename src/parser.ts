@@ -18,8 +18,8 @@ export function parseCardLine(rawLine: string, lineNumber = 1): ParsedLine | nul
   let value = cleanBullet(rawLine);
   if (!value) return null;
 
-  const leadingQuantity = value.match(/^(\d{1,3})\s*[x×]\s*(.+)$/i);
-  const trailingQuantity = value.match(/^(.+?)\s+(\d{1,3})\s*[x×]\s*$/i);
+  const leadingQuantity = value.match(/^(\d{1,3})(?:\s*[x×]\s*|\s+)(.+)$/i);
+  const trailingQuantity = value.match(/^(.+?)\s+(\d{1,3})(?:\s*[x×])?\s*$/i);
   const quantity = Math.min(999, Math.max(1, Number(leadingQuantity?.[1] ?? trailingQuantity?.[2] ?? 1)));
   value = (leadingQuantity?.[2] ?? trailingQuantity?.[1] ?? value).trim();
 
