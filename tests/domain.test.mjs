@@ -63,3 +63,26 @@ test('plain-text wanted lists use the shared output title', () => {
   assert.equal(output.split('\n')[0], 'Riftbound wanted list');
   assert.match(output, /2x Ferrous Forerunner/);
 });
+
+test('ON selects the normal overnumbered printing while Sig selects Signed Showcase', () => {
+  const cases = [
+    ['Scorn of the Moon', 'unl-234-219', 'unl-234-star-219'],
+    ['Voidreaver', 'unl-236-219', 'unl-236-star-219'],
+  ];
+
+  for (const [name, overnumberedId, signedId] of cases) {
+    const overnumbered = parseCardLine(`1x ${name} (ON)`);
+    const signed = parseCardLine(`1x ${name} (Sig)`);
+    assert.ok(overnumbered);
+    assert.ok(signed);
+
+    const overnumberedCard = matchCard(overnumbered, cards).card;
+    const signedCard = matchCard(signed, cards).card;
+    assert.equal(overnumberedCard?.id, overnumberedId);
+    assert.equal(overnumberedCard?.isSigned, false);
+    assert.equal(cardVariantLabel(overnumberedCard), 'Overnumbered');
+    assert.equal(signedCard?.id, signedId);
+    assert.equal(signedCard?.isSigned, true);
+    assert.equal(cardVariantLabel(signedCard), 'Signed Showcase');
+  }
+});

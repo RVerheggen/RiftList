@@ -20,7 +20,7 @@ function normalizeId(value: string) {
 
 function isOvernumbered(card: Card) {
   const total = Number(card.publicCode.match(/\/(\d+)$/)?.[1]);
-  return Number.isFinite(total) && card.collectorNumber > total;
+  return !card.isSigned && Number.isFinite(total) && card.collectorNumber > total;
 }
 
 function hasRequestedVariant(card: Card, parsed: ParsedLine) {
