@@ -86,6 +86,7 @@ export default function App() {
   const [online, setOnline] = useState(navigator.onLine);
   const [exporting, setExporting] = useState(false);
   const [toast, setToast] = useState('');
+  const [clearedInput, setClearedInput] = useState<string | null>(null);
   const previewRef = useRef<HTMLDivElement>(null);
   const toastTimer = useRef<number | undefined>(undefined);
 
@@ -97,7 +98,10 @@ export default function App() {
         return response.json() as Promise<CardCatalog>;
       })
       .then((data) => setCatalog({ ...data, cards: applyCatalogSupplements(data.cards) }))
-      .catch(() => setCatalogError('The bundled card catalog could not be loaded.'));
+      .catch((error) => {
+        console.error('Failed to load bundled card catalog', { url: catalogUrl.toString(), error });
+        setCatalogError('The card catalog could not be loaded.');
+      });
 
     const handleOnline = () => setOnline(navigator.onLine);
     window.addEventListener('online', handleOnline);
@@ -132,10 +136,29 @@ export default function App() {
   const plainText = useMemo(() => formatWantedText(wanted, unmatched), [wanted, unmatched]);
   const canNativeShare = typeof Reflect.get(navigator, 'share') === 'function';
 
-  const announce = (message: string) => {
+  const announce = (message: string, duration = 2_600) => {
     window.clearTimeout(toastTimer.current);
+    setClearedInput(null);
     setToast(message);
-    toastTimer.current = window.setTimeout(() => setToast(''), 2_600);
+    toastTimer.current = window.setTimeout(() => {
+      setToast('');
+      setClearedInput(null);
+    }, duration);
+  };
+
+  const clearInput = () => {
+    if (!input) return;
+    const previousInput = input;
+    announce('List cleared', 5_000);
+    setClearedInput(previousInput);
+    setInput('');
+  };
+
+  const undoClear = () => {
+    if (clearedInput === null) return;
+    const previousInput = clearedInput;
+    setInput(previousInput);
+    announce('List restored');
   };
 
   const matchCards = () => {
@@ -203,8 +226,7 @@ export default function App() {
           <span>RIFT<span>LIST</span></span>
         </a>
         <span className={`status-pill ${!online ? 'offline' : ''}`} title={catalog ? `Catalog updated ${formatCatalogDate(catalog.generatedAt)}` : undefined}>
-          <i aria-hidden="true" />
-          {catalog ? `${catalog.cards.length.toLocaleString()} cards · ${online ? 'ready' : 'offline'}` : catalogError ? 'Catalog unavailable' : 'Loading catalog'}
+          {catalog ? `${catalog.cards.length.toLocaleString()} cards loaded${online ? '' : ' · offline'}` : catalogError ? 'Catalog unavailable' : 'Loading catalog'}
         </span>
       </header>
 
@@ -231,20 +253,22 @@ export default function App() {
           />
           <div className="helper-row" id="format-help">
             <span>Formats: <code>2 Ahri, Alluring</code> · <code>Jinx (AA) 2</code> · <code>1x Annie</code></span>
-            <button type="button" onClick={() => setInput('')}>Clear</button>
+            <button type="button" onClick={clearInput} disabled={!input}>Clear</button>
           </div>
           <button className="primary-button" type="button" onClick={matchCards} disabled={!catalog || !parsedDraft.length}>
             {catalog ? 'Match cards' : 'Loading cards…'} <span aria-hidden="true">→</span>
           </button>
-          {catalogError && <p className="catalog-error" role="alert">{catalogError} Reload the page or check that <code>public/data/cards.json</code> exists.</p>}
+          {catalogError && <p className="catalog-error" role="alert">{catalogError} Reload the page or reconnect to the internet. If the problem continues, report it.</p>}
 
-          <div className="how-it-works" aria-label="Supported list formats">
-            <span>Accepted formats</span>
-            <div><b>AA</b> Alternate art</div>
-            <div><b>Sig</b> Signed Showcase</div>
-            <div><b>ON</b> Overnumbered</div>
-            <div><b>OGN-202</b> Card code</div>
-          </div>
+          <details className="how-it-works">
+            <summary><span>Accepted formats</span><small>AA, Sig, ON, card codes</small></summary>
+            <div className="format-grid" aria-label="Supported list formats">
+              <div><b>AA</b> Alternate art</div>
+              <div><b>Sig</b> Signed Showcase</div>
+              <div><b>ON</b> Overnumbered</div>
+              <div><b>OGN-202</b> Card code</div>
+            </div>
+          </details>
         </div>
 
         <div className="preview-panel" ref={previewRef}>
@@ -285,7 +309,7 @@ export default function App() {
               </div>
             )}
 
-            <footer><span>Made with RiftList</span><span>{online ? 'Ready to trade' : 'Working offline'}</span></footer>
+            <footer><span>Made with RiftList</span></footer>
           </div>
 
           {unmatched.length > 0 && (
@@ -317,7 +341,10 @@ export default function App() {
         </div>
       </section>
 
-      <div className={`toast ${toast ? 'show' : ''}`} role="status" aria-live="polite">{toast}</div>
+      <div className={`toast ${toast ? 'show' : ''} ${clearedInput !== null ? 'has-action' : ''}`}>
+        <span role="status" aria-live="polite" aria-atomic="true">{toast}</span>
+        {clearedInput !== null && <button type="button" onClick={undoClear}>Undo</button>}
+      </div>
     </main>
   );
 }

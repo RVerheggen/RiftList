@@ -10,6 +10,8 @@ const COLORS = {
   white: '#fffefa',
 };
 
+const UI_FONT = 'Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif';
+
 function roundedRect(context: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number) {
   context.beginPath();
   context.roundRect(x, y, width, height, radius);
@@ -63,15 +65,15 @@ function drawHeader(context: CanvasRenderingContext2D, width: number, total: num
   context.font = '900 66px Georgia, serif';
   context.fillText('WANTED', 54, 86);
   context.fillStyle = '#aeb8b1';
-  context.font = '700 20px Arial, sans-serif';
+  context.font = `700 20px ${UI_FONT}`;
   context.letterSpacing = '2px';
   context.fillText('RIFTBOUND TRADE LIST', 58, 125);
   context.textAlign = 'right';
   context.fillStyle = COLORS.white;
-  context.font = '800 26px Arial, sans-serif';
+  context.font = `800 26px ${UI_FONT}`;
   context.fillText(`${total} CARDS`, width - 54, 78);
   context.fillStyle = '#89958d';
-  context.font = '600 18px Arial, sans-serif';
+  context.font = `600 18px ${UI_FONT}`;
   context.fillText(`${unique} unique wants`, width - 54, 113);
   context.textAlign = 'left';
   context.letterSpacing = '0px';
@@ -84,11 +86,8 @@ function drawFooter(context: CanvasRenderingContext2D, width: number, height: nu
   context.lineTo(width - 54, height - 64);
   context.stroke();
   context.fillStyle = COLORS.muted;
-  context.font = '700 16px Arial, sans-serif';
+  context.font = `700 16px ${UI_FONT}`;
   context.fillText('MADE WITH RIFTLIST', 54, height - 31);
-  context.textAlign = 'right';
-  context.fillText('READY TO TRADE', width - 54, height - 31);
-  context.textAlign = 'left';
 }
 
 function ellipsize(context: CanvasRenderingContext2D, value: string, maxWidth: number) {
@@ -135,16 +134,16 @@ async function renderGrid(items: WantedCard[], images: Array<HTMLImageElement | 
     context.fillStyle = COLORS.accent;
     context.fill();
     context.fillStyle = COLORS.white;
-    context.font = '900 20px Arial, sans-serif';
+    context.font = `900 20px ${UI_FONT}`;
     context.textAlign = 'center';
     context.fillText(`${item.quantity}×`, x + tileWidth - 40, y + 39);
     context.textAlign = 'left';
 
     context.fillStyle = COLORS.ink;
-    context.font = '800 17px Arial, sans-serif';
+    context.font = `800 17px ${UI_FONT}`;
     context.fillText(ellipsize(context, item.card.name, tileWidth - 28), x + 14, y + artHeight + 27);
     context.fillStyle = COLORS.muted;
-    context.font = '700 13px Arial, sans-serif';
+    context.font = `700 13px ${UI_FONT}`;
     const detail = [item.card.publicCode, cardVariantLabel(item.card)].filter(Boolean).join(' · ');
     context.fillText(ellipsize(context, detail, tileWidth - 28), x + 14, y + artHeight + 52);
   });
@@ -193,13 +192,13 @@ async function renderList(items: WantedCard[], images: Array<HTMLImageElement | 
     const textX = x + thumbnailWidth + (compact ? 18 : 28);
     const maxTextWidth = columnWidth - thumbnailWidth - (compact ? 28 : 42);
     context.fillStyle = COLORS.accent;
-    context.font = compact ? '900 24px Arial, sans-serif' : '900 34px Arial, sans-serif';
+    context.font = compact ? `900 24px ${UI_FONT}` : `900 34px ${UI_FONT}`;
     context.fillText(`${item.quantity}×`, textX, y + (compact ? 29 : 47));
     context.fillStyle = COLORS.ink;
-    context.font = compact ? '800 19px Arial, sans-serif' : '800 30px Arial, sans-serif';
+    context.font = compact ? `800 19px ${UI_FONT}` : `800 30px ${UI_FONT}`;
     context.fillText(ellipsize(context, item.card.name, maxTextWidth), textX, y + (compact ? 58 : 91));
     context.fillStyle = COLORS.muted;
-    context.font = compact ? '700 13px Arial, sans-serif' : '700 18px Arial, sans-serif';
+    context.font = compact ? `700 13px ${UI_FONT}` : `700 18px ${UI_FONT}`;
     const detail = [item.card.publicCode, item.card.setName, cardVariantLabel(item.card)].filter(Boolean).join(' · ');
     context.fillText(ellipsize(context, detail, maxTextWidth), textX, y + (compact ? 82 : 126));
   });
