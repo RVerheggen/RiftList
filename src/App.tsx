@@ -141,7 +141,8 @@ export default function App() {
   const matchCards = () => {
     setSubmitted(input);
     if (window.matchMedia('(max-width: 900px)').matches) {
-      window.setTimeout(() => previewRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60);
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.setTimeout(() => previewRef.current?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth', block: 'start' }), 60);
     }
   };
 
@@ -202,7 +203,7 @@ export default function App() {
           <span>RIFT<span>LIST</span></span>
         </a>
         <span className={`status-pill ${!online ? 'offline' : ''}`} title={catalog ? `Catalog updated ${formatCatalogDate(catalog.generatedAt)}` : undefined}>
-          <i />
+          <i aria-hidden="true" />
           {catalog ? `${catalog.cards.length.toLocaleString()} cards · ${online ? 'ready' : 'offline'}` : catalogError ? 'Catalog unavailable' : 'Loading catalog'}
         </span>
       </header>
@@ -224,10 +225,11 @@ export default function App() {
             onKeyDown={(event) => {
               if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') matchCards();
             }}
+            aria-describedby="format-help"
             spellCheck="false"
             placeholder={'1x Ferrous Forerunner\n- Ashe, Focused 2x\n1x Nasus, Ascended (AA)'}
           />
-          <div className="helper-row">
+          <div className="helper-row" id="format-help">
             <span>Formats: <code>2 Ahri, Alluring</code> · <code>Jinx (AA) 2</code> · <code>1x Annie</code></span>
             <button type="button" onClick={() => setInput('')}>Clear</button>
           </div>
