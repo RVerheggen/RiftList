@@ -237,7 +237,7 @@ export default function App() {
           {catalogError && <p className="catalog-error" role="alert">{catalogError} Reload the page or check that <code>public/data/cards.json</code> exists.</p>}
 
           <div className="how-it-works" aria-label="Supported list formats">
-            <span>Also understood</span>
+            <span>Accepted formats</span>
             <div><b>AA</b> Alternate art</div>
             <div><b>Sig</b> Signed Showcase</div>
             <div><b>ON</b> Overnumbered</div>

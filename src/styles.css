@@ -40,7 +40,7 @@ textarea:focus { border-color: #ef623d; box-shadow: 0 0 0 3px rgba(239,98,61,.12
 .catalog-error { padding: 12px; border: 1px solid #dfb3a9; border-radius: 9px; background: #fff5f2; color: #923b28; font-size: 12px; line-height: 1.5; }
 .how-it-works { margin-top: 34px; display: grid; grid-template-columns: 1fr 1fr; gap: 9px 16px; color: #758079; font-size: 11px; }
 .how-it-works > span { grid-column: 1 / -1; padding-bottom: 8px; border-bottom: 1px solid #dbd7cc; color: #9a9f9b; font-size: 9px; font-weight: 850; letter-spacing: .14em; text-transform: uppercase; }
-.how-it-works b { display: inline-grid; min-width: 31px; height: 23px; margin-right: 5px; place-items: center; border: 1px solid #cbc8bd; border-radius: 5px; background: #eae7de; color: #334039; font-size: 9px; }
+.how-it-works b { display: inline-grid; min-width: 31px; height: 23px; margin-right: 5px; padding: 0 8px; place-items: center; border: 1px solid #cbc8bd; border-radius: 5px; background: #eae7de; color: #334039; font-size: 9px; white-space: nowrap; }
 
 .preview-panel { min-width: 0; padding: clamp(26px, 4vw, 58px); background: #e4e1d8; }
 .preview-toolbar { max-width: 760px; margin: 0 auto 16px; display: flex; justify-content: space-between; align-items: end; gap: 18px; }
