@@ -25,7 +25,11 @@ The current supplement is Vendetta `VEN-192*/166`, **Nasus, Curator of the Sands
 
 ## Refresh policy
 
-Run `pnpm run data:sync` when a new set or gallery update lands, review the resulting catalog/card count, run `pnpm run build`, and commit the changed snapshot plus any new thumbnails. Existing thumbnails are reused when their image hash is unchanged.
+The **Update Riftbound card data** GitHub Actions workflow runs every Tuesday at 04:23 UTC and can also be started manually. It synchronizes the catalog, runs the tests and production build, commits only changed catalog assets, and deploys the refreshed Pages site. Existing thumbnails are reused when their image hash is unchanged.
+
+The sync is deterministic: an unchanged catalog preserves its generation timestamp and produces no commit. It rejects duplicate card IDs, catalog reductions above five percent, and updates containing more than 500 previously unseen card IDs. These limits make unexpectedly broad upstream changes fail for manual review instead of publishing automatically.
+
+For local maintenance, run `pnpm run data:sync`, review the resulting catalog and card count, and run `pnpm test` plus `pnpm run build` before committing changed assets.
 
 ## Offline behavior
 

@@ -33,17 +33,19 @@ The static output is written to `dist/`.
 
 ## Updating card data
 
-The checked-in catalog and thumbnails make deployed builds independent from a live API. Refresh them with:
+The checked-in catalog and thumbnails make deployed builds independent from a live API. The **Update Riftbound card data** workflow checks the upstream catalog every Tuesday at 04:23 UTC. When card data changes, it validates the application, commits the updated snapshot and new thumbnails, and deploys the refreshed site.
+
+Run the workflow manually from the GitHub Actions tab when a new gallery update should be checked immediately. For local maintenance, use:
 
 ```bash
 pnpm run data:sync
 ```
 
-This downloads the latest public snapshot, normalizes the fields RiftList uses, and adds any missing 320-pixel WebP thumbnails. See [DATA_SOURCES.md](./DATA_SOURCES.md) for source, rights, and caching details.
+This downloads the latest public snapshot, normalizes the fields RiftList uses, and adds any missing 320-pixel WebP thumbnails. Unchanged catalogs keep their existing generation timestamp, so scheduled checks do not create empty update commits. See [DATA_SOURCES.md](./DATA_SOURCES.md) for source, rights, safeguards, and caching details.
 
 ## Deploying to GitHub Pages
 
-The included workflow at `.github/workflows/deploy-pages.yml` builds and deploys every push to `main`.
+The included workflow at `.github/workflows/deploy-pages.yml` builds and deploys every user push to `main`. Scheduled card-data commits are deployed within their own workflow because GitHub does not trigger another workflow from a commit made with the built-in Actions token.
 
 1. Push the project to a GitHub repository with `main` as its default branch.
 2. In **Settings → Pages**, set **Source** to **GitHub Actions**.

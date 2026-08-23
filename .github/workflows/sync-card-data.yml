@@ -1,0 +1,92 @@
+name: Update Riftbound card data
+
+on:
+  schedule:
+    - cron: '23 4 * * 2'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  update-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 22
+
+      - name: Enable pnpm
+        run: corepack enable
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Synchronize card data
+        run: pnpm run data:sync
+
+      - name: Test application
+        run: pnpm test
+
+      - name: Build static site
+        run: pnpm run build
+
+      - name: Detect catalog changes
+        id: changes
+        shell: bash
+        run: |
+          if [[ -n "$(git status --porcelain --untracked-files=all -- public/data/cards.json public/images)" ]]; then
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Commit catalog changes
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data/cards.json public/images
+          git commit -m "Update Riftbound card data"
+          git push origin HEAD:main
+
+      - name: Configure Pages
+        if: steps.changes.outputs.changed == 'true'
+        uses: actions/configure-pages@v6
+
+      - name: Package static site
+        if: steps.changes.outputs.changed == 'true'
+        run: >-
+          tar --dereference --hard-dereference
+          --directory dist
+          -cvf "$RUNNER_TEMP/artifact.tar"
+          --exclude=.git
+          --exclude=.github
+          .
+
+      - name: Upload static site
+        if: steps.changes.outputs.changed == 'true'
+        uses: actions/upload-artifact@v7
+        with:
+          name: github-pages
+          path: ${{ runner.temp }}/artifact.tar
+          retention-days: 1
+          if-no-files-found: error
+
+      - name: Deploy to Pages
+        if: steps.changes.outputs.changed == 'true'
+        id: deployment
+        uses: actions/deploy-pages@v5
