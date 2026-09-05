@@ -1,19 +1,49 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { applyCatalogSupplements } from './catalog';
-import { createWantedImage, downloadWantedImage } from './exporter';
-import { aggregateMatches, cardVariantLabel, formatWantedText, matchCardList } from './matcher';
+import { createWantedImages, downloadWantedImages } from './exporter';
+import { prepareExportPages, wantedImageFilename } from './export-preparation';
+import { aggregateMatches, cardVariantLabel, formatExportedWantedText, formatWantedText, matchCardList } from './matcher';
 import { parseCardList } from './parser';
-import type { Card, CardCatalog, MatchResult, OutputStyle } from './types';
+import type { Card, CardCatalog, ExportPreferences, GroupField, MatchResult, OutputStyle, SortField } from './types';
 
 const SAMPLE = `1x Ferrous Forerunner
 - Ashe, Focused 2x
 1x Nasus, Ascended (AA)`;
+
+const DEFAULT_CARD_LIMITS: Record<OutputStyle, number> = { grid: 12, list: 8, compact: 16 };
+const DEFAULT_EXPORT_PREFERENCES: ExportPreferences = {
+  style: 'grid',
+  cardsPerImage: DEFAULT_CARD_LIMITS,
+  sortBy: 'input',
+  groupBy: 'none',
+  includeText: true,
+};
+const EXPORT_PREFERENCES_KEY = 'riftlist-export-preferences';
+const SORT_OPTIONS: Array<[SortField, string]> = [['input', 'Input order'], ['name', 'Name'], ['domain', 'Domain'], ['energy', 'Energy'], ['might', 'Might'], ['rarity', 'Rarity'], ['set', 'Set'], ['type', 'Type']];
+const GROUP_OPTIONS: Array<[GroupField, string]> = [['none', 'No grouping'], ['domain', 'Domain'], ['set', 'Set'], ['rarity', 'Rarity'], ['type', 'Type']];
 
 function loadPreference<T extends string>(key: string, fallback: T) {
   try {
     return (localStorage.getItem(key) as T | null) ?? fallback;
   } catch {
     return fallback;
+  }
+}
+
+function loadExportPreferences(): ExportPreferences {
+  try {
+    const saved = JSON.parse(localStorage.getItem(EXPORT_PREFERENCES_KEY) ?? '{}') as Partial<ExportPreferences>;
+    const style: OutputStyle = ['grid', 'list', 'compact'].includes(saved.style ?? '') ? saved.style as OutputStyle : DEFAULT_EXPORT_PREFERENCES.style;
+    const sortBy: SortField = SORT_OPTIONS.some(([value]) => value === saved.sortBy) ? saved.sortBy as SortField : DEFAULT_EXPORT_PREFERENCES.sortBy;
+    const groupBy: GroupField = GROUP_OPTIONS.some(([value]) => value === saved.groupBy) ? saved.groupBy as GroupField : DEFAULT_EXPORT_PREFERENCES.groupBy;
+    const cardsPerImage = (Object.keys(DEFAULT_CARD_LIMITS) as OutputStyle[]).reduce((limits, layout) => {
+      const value = saved.cardsPerImage?.[layout];
+      limits[layout] = typeof value === 'number' && Number.isInteger(value) && value >= 1 && value <= 24 ? value : DEFAULT_CARD_LIMITS[layout];
+      return limits;
+    }, {} as Record<OutputStyle, number>);
+    return { style, cardsPerImage, sortBy, groupBy, includeText: typeof saved.includeText === 'boolean' ? saved.includeText : true };
+  } catch {
+    return { ...DEFAULT_EXPORT_PREFERENCES, cardsPerImage: { ...DEFAULT_CARD_LIMITS } };
   }
 }
 
@@ -80,13 +110,14 @@ function UnmatchedNotice({ result, onSuggestion }: { result: MatchResult; onSugg
 export default function App() {
   const [input, setInput] = useState(() => loadPreference<string>('riftlist-input', SAMPLE));
   const [submitted, setSubmitted] = useState(() => loadPreference<string>('riftlist-input', SAMPLE));
-  const [style, setStyle] = useState<OutputStyle>(() => loadPreference<OutputStyle>('riftlist-style', 'grid'));
+  const [exportPreferences, setExportPreferences] = useState<ExportPreferences>(loadExportPreferences);
   const [catalog, setCatalog] = useState<CardCatalog | null>(null);
   const [catalogError, setCatalogError] = useState('');
   const [online, setOnline] = useState(navigator.onLine);
   const [exporting, setExporting] = useState(false);
   const [toast, setToast] = useState('');
   const [clearedInput, setClearedInput] = useState<string | null>(null);
+  const [previewPage, setPreviewPage] = useState(0);
   const previewRef = useRef<HTMLDivElement>(null);
   const toastTimer = useRef<number | undefined>(undefined);
 
@@ -123,8 +154,8 @@ export default function App() {
   }, [input]);
 
   useEffect(() => {
-    try { localStorage.setItem('riftlist-style', style); } catch { /* storage is optional */ }
-  }, [style]);
+    try { localStorage.setItem(EXPORT_PREFERENCES_KEY, JSON.stringify(exportPreferences)); } catch { /* storage is optional */ }
+  }, [exportPreferences]);
 
   const parsedDraft = useMemo(() => parseCardList(input), [input]);
   const parsed = useMemo(() => parseCardList(submitted), [submitted]);
@@ -134,6 +165,10 @@ export default function App() {
   const fuzzyCount = results.filter((result) => result.kind === 'fuzzy').length;
   const totalCards = wanted.reduce((sum, item) => sum + item.quantity, 0);
   const plainText = useMemo(() => formatWantedText(wanted, unmatched), [wanted, unmatched]);
+  const exportPages = useMemo(() => prepareExportPages(wanted, exportPreferences), [wanted, exportPreferences]);
+  const shareText = useMemo(() => formatExportedWantedText(exportPages, unmatched), [exportPages, unmatched]);
+  const activePage = exportPages[previewPage] ?? exportPages[0];
+  const style = exportPreferences.style;
   const canNativeShare = typeof Reflect.get(navigator, 'share') === 'function';
 
   const announce = (message: string, duration = 2_600) => {
@@ -169,6 +204,21 @@ export default function App() {
     }
   };
 
+  const updateExportPreferences = (updates: Partial<ExportPreferences>) => {
+    setPreviewPage(0);
+    setExportPreferences((current) => ({ ...current, ...updates }));
+  };
+
+  const updateCardLimit = (value: number) => {
+    updateExportPreferences({ cardsPerImage: { ...exportPreferences.cardsPerImage, [style]: Math.max(1, Math.min(24, value || 1)) } });
+  };
+
+  const restoreExportDefaults = () => {
+    setPreviewPage(0);
+    setExportPreferences({ ...DEFAULT_EXPORT_PREFERENCES, cardsPerImage: { ...DEFAULT_CARD_LIMITS } });
+    announce('Export settings restored');
+  };
+
   const applySuggestion = (result: MatchResult, card: Card) => {
     const lines = input.split(/\r?\n/);
     const suffix = result.parsed.variant === 'alternate-art' ? ' (AA)'
@@ -200,16 +250,17 @@ export default function App() {
     if (!wanted.length) return;
     setExporting(true);
     try {
-      const blob = await createWantedImage(wanted, style);
-      const file = new File([blob], 'riftlist-wanted.png', { type: 'image/png' });
+      const blobs = await createWantedImages(exportPages, style);
+      const timestamp = Date.now();
+      const files = blobs.map((blob, index) => new File([blob], wantedImageFilename(index, blobs.length), { type: 'image/png', lastModified: timestamp + index * 1_000 }));
       const nativeShare = Reflect.get(navigator, 'share') as ((data: ShareData) => Promise<void>) | undefined;
       const nativeCanShare = Reflect.get(navigator, 'canShare') as ((data: ShareData) => boolean) | undefined;
-      if (share && nativeShare && (!nativeCanShare || nativeCanShare.call(navigator, { files: [file] }))) {
-        await nativeShare.call(navigator, { files: [file], title: 'Riftbound wanted list', text: plainText });
+      if (share && nativeShare && (!nativeCanShare || nativeCanShare.call(navigator, { files }))) {
+        await nativeShare.call(navigator, { files, title: 'Riftbound wanted list', ...(exportPreferences.includeText ? { text: shareText } : {}) });
         announce('Share sheet opened');
       } else {
-        downloadWantedImage(blob);
-        announce('PNG saved');
+        downloadWantedImages(blobs);
+        announce(`${blobs.length} image${blobs.length === 1 ? '' : 's'} saved`);
       }
     } catch (error) {
       if ((error as DOMException).name !== 'AbortError') announce('Image export failed. Try again');
@@ -284,22 +335,52 @@ export default function App() {
                   type="button"
                   className={style === option ? 'active' : ''}
                   aria-pressed={style === option}
-                  onClick={() => setStyle(option)}
+                  onClick={() => updateExportPreferences({ style: option })}
                   key={option}
                 >{option[0].toUpperCase() + option.slice(1)}</button>
               ))}
             </div>
           </div>
 
+          <details className="export-settings">
+            <summary>
+              <span>Customize export</span>
+              <small>{exportPreferences.cardsPerImage[style]} per image · {SORT_OPTIONS.find(([value]) => value === exportPreferences.sortBy)?.[1]} · {exportPreferences.groupBy === 'none' ? 'No grouping' : `Group by ${GROUP_OPTIONS.find(([value]) => value === exportPreferences.groupBy)?.[1]}`} · Text {exportPreferences.includeText ? 'on' : 'off'}</small>
+            </summary>
+            <div className="export-settings-fields">
+              <label>
+                <span>Cards per image</span>
+                <input type="number" min="1" max="24" value={exportPreferences.cardsPerImage[style]} onChange={(event) => updateCardLimit(event.target.valueAsNumber)} />
+              </label>
+              <label>
+                <span>Sort by</span>
+                <select value={exportPreferences.sortBy} onChange={(event) => updateExportPreferences({ sortBy: event.target.value as SortField })}>
+                  {SORT_OPTIONS.map(([value, label]) => <option value={value} key={value}>{label}</option>)}
+                </select>
+              </label>
+              <label>
+                <span>Group by</span>
+                <select value={exportPreferences.groupBy} onChange={(event) => updateExportPreferences({ groupBy: event.target.value as GroupField })}>
+                  {GROUP_OPTIONS.map(([value, label]) => <option value={value} key={value}>{label}</option>)}
+                </select>
+              </label>
+              <label className="toggle-field">
+                <input type="checkbox" checked={exportPreferences.includeText} onChange={(event) => updateExportPreferences({ includeText: event.target.checked })} />
+                <span>Include text in share</span>
+              </label>
+              <button type="button" className="restore-settings" onClick={restoreExportDefaults}>Restore export defaults</button>
+            </div>
+          </details>
+
           <div className={`wanted-board board-${style}`} aria-live="polite" aria-busy={!catalog}>
             <div className="board-head">
               <div><span>WANTED</span><small>Riftbound trade list</small></div>
-              <b>{wanted.length} unique</b>
+              {exportPages.length > 1 && <b>Page {Math.min(previewPage + 1, exportPages.length)} of {exportPages.length}</b>}
             </div>
 
-            {wanted.length > 0 ? (
+            {activePage ? (
               <div className="result-grid">
-                {wanted.map((item, index) => <ResultCard item={item} style={style} eager={index < 6} key={item.card.id} />)}
+                {activePage.items.map((item, index) => <ResultCard item={item} style={style} eager={index < 6} key={item.card.id} />)}
               </div>
             ) : (
               <div className="empty-board">
@@ -312,6 +393,14 @@ export default function App() {
             <footer><span>Made with RiftList</span></footer>
           </div>
 
+          {exportPages.length > 1 && (
+            <div className="page-navigation" aria-label="Export page preview">
+              <button type="button" onClick={() => setPreviewPage((page) => Math.max(0, page - 1))} disabled={previewPage === 0}>Previous</button>
+              <span>Page {previewPage + 1} of {exportPages.length}{activePage?.groupLabel ? ` · ${activePage.groupLabel}` : ''}</span>
+              <button type="button" onClick={() => setPreviewPage((page) => Math.min(exportPages.length - 1, page + 1))} disabled={previewPage === exportPages.length - 1}>Next</button>
+            </div>
+          )}
+
           {unmatched.length > 0 && (
             <section className="unmatched-panel" aria-labelledby="unmatched-title">
               <div><span className="eyebrow">Needs a look</span><strong id="unmatched-title">{unmatched.length} unmatched {unmatched.length === 1 ? 'line' : 'lines'}</strong></div>
@@ -321,9 +410,9 @@ export default function App() {
 
           <div className={`preview-actions ${canNativeShare ? 'has-share' : ''}`}>
             <button type="button" onClick={copyText} disabled={!wanted.length}>Copy text</button>
-            {canNativeShare && <button type="button" onClick={() => makeImage(true)} disabled={!wanted.length || exporting}>Share image</button>}
+            {canNativeShare && <button type="button" onClick={() => makeImage(true)} disabled={!wanted.length || exporting}>Share {exportPages.length === 1 ? 'image' : 'images'}</button>}
             <button className="download" type="button" onClick={() => makeImage(false)} disabled={!wanted.length || exporting}>
-              {exporting ? 'Building PNG…' : 'Save PNG'}
+              {exporting ? `Building ${exportPages.length === 1 ? 'image' : 'images'}…` : `Save ${exportPages.length === 1 ? 'image' : 'images'}`}
             </button>
           </div>
 

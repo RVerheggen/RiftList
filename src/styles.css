@@ -24,7 +24,7 @@ html { scroll-behavior: smooth; }
 body { margin: 0; min-width: 320px; min-height: 100vh; background: var(--warm-ivory); }
 ::selection { background: rgba(239, 98, 61, .22); color: var(--near-black-ink); }
 * { scrollbar-color: #aaa99f var(--warm-ivory); scrollbar-width: thin; }
-button, textarea { font: inherit; }
+button, textarea, input, select { font: inherit; }
 button { cursor: pointer; -webkit-tap-highlight-color: transparent; }
 button:disabled { cursor: not-allowed; opacity: .5; }
 button:focus-visible, textarea:focus-visible, summary:focus-visible, a:focus-visible { outline: 3px solid rgba(239, 98, 61, .34); outline-offset: 2px; }
@@ -75,6 +75,24 @@ textarea:focus { border-color: var(--signal-orange); box-shadow: 0 0 0 3px rgba(
 .segmented button { min-height: 34px; padding: 7px 10px; border: 0; border-radius: 6px; background: transparent; color: #69726c; font-size: 11px; font-weight: 800; transition: color .16s ease, background-color .16s ease, box-shadow .16s ease; }
 .segmented .active { background: #fff; color: #1c241f; box-shadow: 0 1px 4px rgba(20,25,22,.1); }
 
+.export-settings { max-width: 760px; margin: 0 auto 16px; border: 1px solid #cbc8be; border-radius: 10px; background: rgba(255,255,255,.42); overflow: hidden; }
+.export-settings summary { min-height: 48px; padding: 12px 15px; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 12px; cursor: pointer; list-style: none; color: #303a34; }
+.export-settings summary::-webkit-details-marker { display: none; }
+.export-settings summary span { font-size: 12px; font-weight: 850; }
+.export-settings summary small { overflow: hidden; color: #758079; font-size: 10px; font-weight: 650; text-align: right; text-overflow: ellipsis; white-space: nowrap; }
+.export-settings summary::after { content: '+'; grid-column: 3; color: #59645d; font-size: 18px; font-weight: 500; line-height: 1; }
+.export-settings[open] summary { border-bottom: 1px solid #d6d2c8; }
+.export-settings[open] summary::after { content: '−'; }
+.export-settings-fields { padding: 14px 15px 15px; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.export-settings-fields label { min-width: 0; display: grid; gap: 6px; color: #536058; font-size: 10px; font-weight: 800; }
+.export-settings-fields label > span { color: #69726c; font-size: 9px; letter-spacing: .08em; text-transform: uppercase; }
+.export-settings-fields input[type="number"], .export-settings-fields select { width: 100%; min-height: 39px; border: 1px solid #c6c4bb; border-radius: 7px; padding: 7px 9px; background: #fffefa; color: #27312b; font-size: 12px; font-weight: 700; }
+.toggle-field { grid-column: span 2; min-height: 39px; display: flex !important; align-items: center; gap: 9px; padding: 0 2px; }
+.toggle-field input { width: 18px; height: 18px; margin: 0; }
+.toggle-field > span { font-size: 11px !important; letter-spacing: 0 !important; text-transform: none !important; }
+.restore-settings { min-height: 39px; border: 0; border-radius: 7px; background: transparent; color: #66726a; font-size: 11px; font-weight: 800; text-decoration: underline; text-underline-offset: 3px; }
+.restore-settings:hover { background: rgba(255,255,255,.62); color: #303b34; }
+
 .wanted-board { max-width: 760px; margin: 0 auto; padding: clamp(18px, 3vw, 34px); border: 1px solid #1d2621; border-radius: 5px; background: var(--deep-forest); color: white; box-shadow: 12px 14px 0 rgba(28,35,30,.11); }
 .board-head { margin-bottom: 22px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #3b453f; padding-bottom: 14px; }
 .board-head > div { display: flex; align-items: baseline; gap: 13px; }
@@ -96,6 +114,9 @@ textarea:focus { border-color: var(--signal-orange); box-shadow: 0 0 0 3px rgba(
 .card-copy small { margin-top: 3px; color: #77827b; font-size: 9px; }
 .card-copy em { margin-top: 4px; color: #d0a891; font-size: 8px; font-style: normal; }
 .wanted-board footer { margin-top: 24px; padding-top: 12px; display: flex; border-top: 1px solid #3b453f; color: #89938c; font-size: 9px; text-transform: uppercase; letter-spacing: .1em; }
+.page-navigation { max-width: 760px; margin: 14px auto 0; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 10px; color: #647068; font-size: 11px; font-weight: 800; text-align: center; }
+.page-navigation button { min-height: 40px; border: 1px solid #c3c2ba; border-radius: 8px; padding: 8px 12px; background: #f8f6f0; color: #354038; font-size: 11px; font-weight: 800; }
+.page-navigation button:not(:disabled):hover { border-color: #999d98; background: #fff; }
 
 .board-list .result-grid { grid-template-columns: 1fr; gap: 0; }
 .board-list .result-card { display: grid; grid-template-columns: 95px minmax(0, 1fr); gap: 17px; padding: 13px 0; border-top: 1px solid #313c35; }
@@ -175,6 +196,10 @@ textarea:focus { border-color: var(--signal-orange); box-shadow: 0 0 0 3px rgba(
   .preview-toolbar { align-items: stretch; flex-direction: column; }
   .segmented { width: 100%; }
   .segmented button { min-height: 44px; flex: 1; }
+  .export-settings-fields { grid-template-columns: 1fr 1fr; }
+  .export-settings-fields label:first-child { grid-column: span 2; }
+  .toggle-field { grid-column: 1 / -1; }
+  .restore-settings { grid-column: 1 / -1; }
   .wanted-board { padding: 16px; box-shadow: 7px 8px 0 rgba(28,35,30,.11); }
   .board-head { align-items: start; }
   .board-head > div { align-items: start; flex-direction: column; gap: 4px; }

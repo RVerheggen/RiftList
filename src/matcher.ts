@@ -1,4 +1,5 @@
 import type { Card, MatchResult, ParsedLine, WantedCard } from './types';
+import type { ExportPage } from './export-preparation';
 import { variantLabel } from './parser.ts';
 
 export function normalize(value: string) {
@@ -162,11 +163,30 @@ export function cardVariantLabel(card: Card) {
   return undefined;
 }
 
-export function formatWantedText(items: WantedCard[], unmatched: MatchResult[]) {
-  const lines = items.map(({ card, quantity }) => {
-    const detail = [card.publicCode, cardVariantLabel(card)].filter(Boolean).join(' · ');
-    return `${quantity}x ${card.name}${detail ? ` · ${detail}` : ''}`;
-  });
+function wantedLine({ card, quantity }: WantedCard) {
+  const detail = [card.publicCode, cardVariantLabel(card)].filter(Boolean).join(' · ');
+  return `${quantity}x ${card.name}${detail ? ` · ${detail}` : ''}`;
+}
+
+function unmatchedLines(unmatched: MatchResult[]) {
   const missing = unmatched.map(({ parsed }) => `${parsed.quantity}x ${parsed.name} · not matched`);
-  return ['Riftbound wanted list', '', ...lines, ...(missing.length ? ['', 'UNMATCHED', ...missing] : [])].join('\n');
+  return missing.length ? ['', 'UNMATCHED', ...missing] : [];
+}
+
+export function formatWantedText(items: WantedCard[], unmatched: MatchResult[]) {
+  return ['Riftbound wanted list', '', ...items.map(wantedLine), ...unmatchedLines(unmatched)].join('\n');
+}
+
+export function formatExportedWantedText(pages: ExportPage[], unmatched: MatchResult[]) {
+  const lines: string[] = [];
+  let previousGroup: string | undefined;
+  for (const page of pages) {
+    if (page.groupLabel && page.groupLabel !== previousGroup) {
+      if (lines.length) lines.push('');
+      lines.push(page.groupLabel.toUpperCase());
+      previousGroup = page.groupLabel;
+    }
+    lines.push(...page.items.map(wantedLine));
+  }
+  return ['Riftbound wanted list', '', ...lines, ...unmatchedLines(unmatched)].join('\n');
 }

@@ -8,6 +8,10 @@ export interface Card {
   name: string;
   type: string;
   rarity: string;
+  domains: string[];
+  energy: number | null;
+  might: number | null;
+  power: number | null;
   orientation: 'portrait' | 'landscape';
   isAltArt: boolean;
   isSigned: boolean;
@@ -50,3 +54,14 @@ export interface WantedCard {
 }
 
 export type OutputStyle = 'grid' | 'list' | 'compact';
+
+export type SortField = 'input' | 'name' | 'domain' | 'energy' | 'might' | 'rarity' | 'set' | 'type';
+export type GroupField = 'none' | 'domain' | 'set' | 'rarity' | 'type';
+
+export interface ExportPreferences {
+  style: OutputStyle;
+  cardsPerImage: Record<OutputStyle, number>;
+  sortBy: SortField;
+  groupBy: GroupField;
+  includeText: boolean;
+}

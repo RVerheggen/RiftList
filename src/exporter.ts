@@ -1,5 +1,6 @@
 import { cardVariantLabel } from './matcher';
 import type { OutputStyle, WantedCard } from './types';
+import { wantedImageFilename, type ExportPage } from './export-preparation';
 
 const COLORS = {
   paper: '#f5f1e8',
@@ -58,7 +59,7 @@ async function loadImage(url: string) {
   });
 }
 
-function drawHeader(context: CanvasRenderingContext2D, width: number, total: number, unique: number) {
+function drawHeader(context: CanvasRenderingContext2D, width: number, total: number, unique: number, groupLabel: string | undefined, pageNumber: number, pageCount: number) {
   context.fillStyle = COLORS.ink;
   context.fillRect(0, 0, width, 164);
   context.fillStyle = COLORS.accent;
@@ -67,14 +68,14 @@ function drawHeader(context: CanvasRenderingContext2D, width: number, total: num
   context.fillStyle = '#aeb8b1';
   context.font = `700 20px ${UI_FONT}`;
   context.letterSpacing = '2px';
-  context.fillText('RIFTBOUND TRADE LIST', 58, 125);
+  context.fillText(groupLabel ? `${groupLabel.toUpperCase()} · RIFTBOUND TRADE LIST` : 'RIFTBOUND TRADE LIST', 58, 125);
   context.textAlign = 'right';
   context.fillStyle = COLORS.white;
   context.font = `800 26px ${UI_FONT}`;
   context.fillText(`${total} CARDS`, width - 54, 78);
   context.fillStyle = '#89958d';
   context.font = `600 18px ${UI_FONT}`;
-  context.fillText(`${unique} unique wants`, width - 54, 113);
+  if (pageCount > 1) context.fillText(`PAGE ${pageNumber} OF ${pageCount}`, width - 54, 113);
   context.textAlign = 'left';
   context.letterSpacing = '0px';
 }
@@ -97,7 +98,7 @@ function ellipsize(context: CanvasRenderingContext2D, value: string, maxWidth: n
   return `${result}…`;
 }
 
-async function renderGrid(items: WantedCard[], images: Array<HTMLImageElement | null>) {
+async function renderGrid(items: WantedCard[], images: Array<HTMLImageElement | null>, total: number, unique: number, groupLabel: string | undefined, pageNumber: number, pageCount: number) {
   const width = 1080;
   const columns = 3;
   const gap = 24;
@@ -113,7 +114,7 @@ async function renderGrid(items: WantedCard[], images: Array<HTMLImageElement | 
   const context = canvas.getContext('2d')!;
   context.fillStyle = COLORS.paper;
   context.fillRect(0, 0, width, height);
-  drawHeader(context, width, items.reduce((sum, item) => sum + item.quantity, 0), items.length);
+  drawHeader(context, width, total, unique, groupLabel, pageNumber, pageCount);
 
   items.forEach((item, index) => {
     const column = index % columns;
@@ -151,7 +152,7 @@ async function renderGrid(items: WantedCard[], images: Array<HTMLImageElement | 
   return canvas;
 }
 
-async function renderList(items: WantedCard[], images: Array<HTMLImageElement | null>, compact: boolean) {
+async function renderList(items: WantedCard[], images: Array<HTMLImageElement | null>, compact: boolean, total: number, unique: number, groupLabel: string | undefined, pageNumber: number, pageCount: number) {
   const width = 1080;
   const side = 54;
   const columns = compact ? 2 : 1;
@@ -165,7 +166,7 @@ async function renderList(items: WantedCard[], images: Array<HTMLImageElement | 
   const context = canvas.getContext('2d')!;
   context.fillStyle = COLORS.paper;
   context.fillRect(0, 0, width, height);
-  drawHeader(context, width, items.reduce((sum, item) => sum + item.quantity, 0), items.length);
+  drawHeader(context, width, total, unique, groupLabel, pageNumber, pageCount);
   const columnWidth = (width - side * 2 - columnGap) / columns;
 
   items.forEach((item, index) => {
@@ -206,21 +207,35 @@ async function renderList(items: WantedCard[], images: Array<HTMLImageElement | 
   return canvas;
 }
 
-export async function createWantedImage(items: WantedCard[], style: OutputStyle) {
-  const images = await Promise.all(items.map((item) => loadImage(new URL(item.card.imagePath, document.baseURI).toString())));
-  const canvas = style === 'grid'
-    ? await renderGrid(items, images)
-    : await renderList(items, images, style === 'compact');
+async function canvasBlob(canvas: HTMLCanvasElement) {
   return new Promise<Blob>((resolve, reject) => {
     canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('Unable to create the PNG image.')), 'image/png');
   });
 }
 
-export function downloadWantedImage(blob: Blob) {
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement('a');
-  anchor.href = url;
-  anchor.download = `riftlist-wanted-${new Date().toISOString().slice(0, 10)}.png`;
-  anchor.click();
-  window.setTimeout(() => URL.revokeObjectURL(url), 1_000);
+export async function createWantedImages(pages: ExportPage[], style: OutputStyle) {
+  const allItems = pages.flatMap((page) => page.items);
+  const total = allItems.reduce((sum, item) => sum + item.quantity, 0);
+  const unique = allItems.length;
+  const blobs: Blob[] = [];
+  for (const [index, page] of pages.entries()) {
+    const images = await Promise.all(page.items.map((item) => loadImage(new URL(item.card.imagePath, document.baseURI).toString())));
+    const canvas = style === 'grid'
+      ? await renderGrid(page.items, images, total, unique, page.groupLabel, index + 1, pages.length)
+      : await renderList(page.items, images, style === 'compact', total, unique, page.groupLabel, index + 1, pages.length);
+    blobs.push(await canvasBlob(canvas));
+  }
+  return blobs;
+}
+
+export function downloadWantedImages(blobs: Blob[]) {
+  const date = new Date().toISOString().slice(0, 10);
+  blobs.forEach((blob, index) => {
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement('a');
+    anchor.href = url;
+    anchor.download = wantedImageFilename(index, blobs.length, date);
+    anchor.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 1_000);
+  });
 }
