@@ -246,6 +246,21 @@ export default function App() {
     }
   };
 
+  const copyShareText = async () => {
+    try {
+      await navigator.clipboard.writeText(shareText);
+      return true;
+    } catch {
+      const field = document.createElement('textarea');
+      field.value = shareText;
+      document.body.append(field);
+      field.select();
+      const copied = document.execCommand('copy');
+      field.remove();
+      return copied;
+    }
+  };
+
   const makeImage = async (share = false) => {
     if (!wanted.length) return;
     setExporting(true);
@@ -256,8 +271,9 @@ export default function App() {
       const nativeShare = Reflect.get(navigator, 'share') as ((data: ShareData) => Promise<void>) | undefined;
       const nativeCanShare = Reflect.get(navigator, 'canShare') as ((data: ShareData) => boolean) | undefined;
       if (share && nativeShare && (!nativeCanShare || nativeCanShare.call(navigator, { files }))) {
-        await nativeShare.call(navigator, { files, title: 'Riftbound wanted list', ...(exportPreferences.includeText ? { text: shareText } : {}) });
-        announce('Share sheet opened');
+        const copiedShareText = exportPreferences.includeText && files.length > 1 ? await copyShareText() : false;
+        await nativeShare.call(navigator, { files, title: 'Riftbound wanted list', ...(exportPreferences.includeText && files.length === 1 ? { text: shareText } : {}) });
+        announce(copiedShareText ? 'Images shared. Text copied, paste it once in WhatsApp.' : 'Share sheet opened');
       } else {
         downloadWantedImages(blobs);
         announce(`${blobs.length} image${blobs.length === 1 ? '' : 's'} saved`);
@@ -368,6 +384,7 @@ export default function App() {
                 <input type="checkbox" checked={exportPreferences.includeText} onChange={(event) => updateExportPreferences({ includeText: event.target.checked })} />
                 <span>Include text in share</span>
               </label>
+              {exportPages.length > 1 && exportPreferences.includeText && <small className="share-text-note">Text is copied so you can paste it once in WhatsApp.</small>}
               <button type="button" className="restore-settings" onClick={restoreExportDefaults}>Restore export defaults</button>
             </div>
           </details>
