@@ -210,8 +210,6 @@ textarea:focus { border-color: var(--signal-orange); box-shadow: 0 0 0 3px rgba(
   .card-copy span { font-size: 8px; }
   .quantity-badge { right: 5px; top: 5px; min-width: 29px; padding: 5px; font-size: 9px; }
   .board-list .result-card { grid-template-columns: 78px minmax(0, 1fr); gap: 14px; }
-  .board-compact .result-grid { grid-template-columns: 1fr; }
-  .board-compact .result-card:nth-child(2) { border-top: 1px solid #313c35; padding-top: 10px; }
   .preview-actions, .preview-actions.has-share { grid-template-columns: 1fr; }
   .source-note { padding-inline: 20px; }
 }
