@@ -2,9 +2,11 @@ import { access, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const SOURCE_URL = 'https://raw.githubusercontent.com/slimtreble/Riftbound-card-data/main/cards.json';
-const outputPath = resolve(dirname(fileURLToPath(import.meta.url)), '../public/data/cards.json');
-const imageDirectory = resolve(dirname(fileURLToPath(import.meta.url)), '../public/images');
+const scriptDirectory = dirname(fileURLToPath(import.meta.url));
+const SOURCE_URL = 'https://playriftbound.com/en-us/card-gallery/';
+const sourcePath = resolve(scriptDirectory, 'cards.json');
+const outputPath = resolve(scriptDirectory, '../public/data/cards.json');
+const imageDirectory = resolve(scriptDirectory, '../public/images');
 const maximumCardDropRatio = 0.05;
 const maximumNewCards = 500;
 
@@ -28,12 +30,15 @@ function thumbnailDetails(card) {
   return { filename, url: source.toString() };
 }
 
-const response = await fetch(SOURCE_URL, { headers: { accept: 'application/json' } });
-if (!response.ok) throw new Error(`Card data download failed with HTTP ${response.status}`);
+let sourceCards;
+try {
+  sourceCards = JSON.parse(await readFile(sourcePath, 'utf8'));
+} catch (error) {
+  throw new Error(`Could not read generated gallery data at ${sourcePath}. Run "python scripts/fetch_cards.py" before syncing.`, { cause: error });
+}
 
-const sourceCards = await response.json();
 if (!Array.isArray(sourceCards) || sourceCards.length < 100) {
-  throw new Error('The downloaded card catalog did not have the expected shape.');
+  throw new Error('The generated card catalog did not have the expected shape.');
 }
 
 const existingCatalog = await readExistingCatalog();

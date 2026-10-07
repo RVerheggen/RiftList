@@ -29,11 +29,19 @@ jobs:
         with:
           node-version: 22
 
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+
       - name: Enable pnpm
         run: corepack enable
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Fetch the official card gallery
+        run: python scripts/fetch_cards.py
 
       - name: Synchronize card data
         run: pnpm run data:sync

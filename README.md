@@ -33,15 +33,16 @@ The static output is written to `dist/`.
 
 ## Updating card data
 
-The checked-in catalog and thumbnails make deployed builds independent from a live API. The **Update Riftbound card data** workflow checks the upstream catalog every Tuesday at 04:23 UTC. When card data changes, it validates the application, commits the updated snapshot and new thumbnails, and deploys the refreshed site.
+The checked-in catalog and thumbnails make deployed builds independent from a live API. The **Update Riftbound card data** workflow checks the official Riftbound gallery every Tuesday at 04:23 UTC. When card data changes, it validates the application, commits the updated snapshot and new thumbnails, and deploys the refreshed site.
 
 Run the workflow manually from the GitHub Actions tab when a new gallery update should be checked immediately. For local maintenance, use:
 
 ```bash
+python scripts/fetch_cards.py
 pnpm run data:sync
 ```
 
-This downloads the latest public snapshot, normalizes the fields RiftList uses, and adds any missing 320-pixel WebP thumbnails. Unchanged catalogs keep their existing generation timestamp, so scheduled checks do not create empty update commits. See [DATA_SOURCES.md](./DATA_SOURCES.md) for source, rights, safeguards, and caching details.
+This fetches the latest official-gallery snapshot, normalizes the fields RiftList uses, and adds any missing 320-pixel WebP thumbnails. Unchanged catalogs keep their existing generation timestamp, so scheduled checks do not create empty update commits. See [DATA_SOURCES.md](./DATA_SOURCES.md) for source, rights, safeguards, and caching details.
 
 ## Deploying to GitHub Pages
 

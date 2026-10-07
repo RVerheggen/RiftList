@@ -13,13 +13,17 @@ const excludedToolingPaths = new Set([
   '.github/hooks',
   '.github/skills',
 ]);
+const excludedGeneratedPaths = new Set([
+  'scripts/cards.csv',
+  'scripts/cards.json',
+]);
 const textExtensions = new Set([
   '.css', '.html', '.js', '.json', '.md', '.mjs', '.svg', '.ts', '.tsx', '.webmanifest', '.yaml', '.yml',
 ]);
 
 function isExcludedToolingPath(path) {
   const repositoryPath = relative(repositoryRoot, path).replaceAll('\\', '/');
-  return excludedToolingPaths.has(repositoryPath);
+  return excludedToolingPaths.has(repositoryPath) || excludedGeneratedPaths.has(repositoryPath);
 }
 
 async function collectTextFiles(directory) {
@@ -28,7 +32,7 @@ async function collectTextFiles(directory) {
     const path = resolve(directory, entry.name);
     if (entry.isDirectory() && (excludedDirectories.has(entry.name) || isExcludedToolingPath(path))) continue;
     if (entry.isDirectory()) files.push(...await collectTextFiles(path));
-    else if (textExtensions.has(extname(entry.name))) files.push(path);
+    else if (!isExcludedToolingPath(path) && textExtensions.has(extname(entry.name))) files.push(path);
   }
   return files;
 }

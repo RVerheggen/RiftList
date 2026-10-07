@@ -29,6 +29,10 @@ yarn-error.log*
 /dist/
 *.tsbuildinfo
 
+# temporary output from the official-gallery extractor
+/scripts/cards.json
+/scripts/cards.csv
+
 # local agent tooling
 /.agents/
 /.codex/

@@ -6,11 +6,11 @@ RiftList ships a normalized snapshot at `public/data/cards.json` and optimized W
 
 ## Upstream data
 
-The snapshot is downloaded from the open [slimtreble/Riftbound-card-data](https://github.com/slimtreble/Riftbound-card-data) dataset. That project extracts the card records embedded in Riot’s public [Riftbound card gallery](https://playriftbound.com/en-us/card-gallery/) and exposes direct Riot/Sanity image URLs. The sync script keeps only the fields needed for matching, display, and export.
+The snapshot is extracted directly from Riot’s public [Riftbound card gallery](https://playriftbound.com/en-us/card-gallery/). `scripts/fetch_cards.py` reads the card records embedded in the gallery’s Next.js page data and writes a temporary local `scripts/cards.json`; it is based on the approach published by [slimtreble/Riftbound-card-data](https://github.com/slimtreble/Riftbound-card-data). The sync script keeps only the fields needed for matching, display, and export.
 
 The repository’s `scripts/sync-card-data.mjs` script:
 
-1. Downloads the upstream `cards.json` snapshot.
+1. Reads the `cards.json` snapshot generated from the official gallery.
 2. Validates and normalizes the records used by RiftList.
 3. Requests 320-pixel WebP renditions from the public Riot/Sanity asset source.
 4. Writes a self-contained catalog whose cards point at those local thumbnails.
@@ -27,9 +27,9 @@ The current supplement is Vendetta `VEN-192*/166`, **Nasus, Curator of the Sands
 
 The **Update Riftbound card data** GitHub Actions workflow runs every Tuesday at 04:23 UTC and can also be started manually. It synchronizes the catalog, runs the tests and production build, commits only changed catalog assets, and deploys the refreshed Pages site. Existing thumbnails are reused when their image hash is unchanged.
 
-The sync is deterministic: an unchanged catalog preserves its generation timestamp and produces no commit. It rejects duplicate card IDs, catalog reductions above five percent, and updates containing more than 500 previously unseen card IDs. These limits make unexpectedly broad upstream changes fail for manual review instead of publishing automatically.
+The sync is deterministic: an unchanged catalog preserves its generation timestamp and produces no commit. It rejects duplicate card IDs, catalog reductions above five percent, and updates containing more than 500 previously unseen card IDs. These limits make unexpectedly broad gallery changes fail for manual review instead of publishing automatically.
 
-For local maintenance, run `pnpm run data:sync`, review the resulting catalog and card count, and run `pnpm test` plus `pnpm run build` before committing changed assets.
+For local maintenance, run `python scripts/fetch_cards.py`, then `pnpm run data:sync`; review the resulting catalog and card count, and run `pnpm test` plus `pnpm run build` before committing changed assets.
 
 ## Offline behavior
 
