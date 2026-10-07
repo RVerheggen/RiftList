@@ -46,6 +46,16 @@ test('quantities work before or after a card name without an x', () => {
   assert.equal(matchCard(trailing, cards).kind, 'exact');
 });
 
+test('card subtitles distinguish cards that share the same champion name', () => {
+  const parsed = parseCardLine('1x Rengar, Trophy Hunter');
+  assert.ok(parsed);
+
+  const result = matchCard(parsed, cards);
+  assert.equal(result.kind, 'exact');
+  assert.equal(result.card?.name, 'Rengar, Trophy Hunter');
+  assert.notEqual(result.card?.publicCode, 'SFD-025/221');
+});
+
 test('bare quantities preserve variant notes and x quantities remain supported', () => {
   const bare = parseCardLine('2 Nasus, Ascended (AA)');
   const withX = parseCardLine('Nasus, Ascended (AA) 2x');

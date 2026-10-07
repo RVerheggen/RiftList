@@ -86,6 +86,9 @@ def flatten(c):
     signed = "*" in code
     alt = bool(re.match(r"^\d+[a-z]$", suffix))
     body = val(c, "text", "richText", "body") or ""
+    name = c.get("name") or ""
+    subtitle = c.get("subtitle") or ""
+    full_name = ", ".join(part for part in (name, subtitle) if part)
     return {
         "id": c.get("id"),
         "code": head.replace("*", ""),
@@ -93,7 +96,7 @@ def flatten(c):
         "set": val(c, "set", "value", "id"),
         "setName": val(c, "set", "value", "label"),
         "collectorNumber": c.get("collectorNumber"),
-        "name": c.get("name"),
+        "name": full_name,
         "type": " / ".join(t["label"] for t in (val(c, "cardType", "type") or [])),
         "rarity": val(c, "rarity", "value", "label"),
         "domains": [d["label"] for d in (val(c, "domain", "values") or [])],
