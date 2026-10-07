@@ -43,7 +43,7 @@ if (!Array.isArray(sourceCards) || sourceCards.length < 100) {
 
 const existingCatalog = await readExistingCatalog();
 
-const cards = sourceCards.map((card) => {
+const normalizedCards = sourceCards.map((card) => {
   const thumbnail = thumbnailDetails(card);
   return {
     id: String(card.id ?? ''),
@@ -69,11 +69,22 @@ const cards = sourceCards.map((card) => {
   };
 }).filter((card) => card.id && card.name && card.imageUrl);
 
-if (cards.length < 100) throw new Error('Too few valid cards remained after normalization.');
+const cardsById = new Map();
+for (const card of normalizedCards) {
+  const existingCard = cardsById.get(card.id);
+  if (!existingCard) {
+    cardsById.set(card.id, card);
+    continue;
+  }
 
-if (new Set(cards.map((card) => card.id)).size !== cards.length) {
-  throw new Error('The downloaded card catalog contained duplicate card IDs.');
+  if (JSON.stringify(existingCard) !== JSON.stringify(card)) {
+    throw new Error(`The generated card catalog contains conflicting records for card ID ${card.id}.`);
+  }
 }
+
+const cards = [...cardsById.values()];
+
+if (cards.length < 100) throw new Error('Too few valid cards remained after normalization.');
 
 if (existingCatalog) {
   const existingCards = existingCatalog.cards;

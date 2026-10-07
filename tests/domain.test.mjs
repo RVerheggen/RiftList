@@ -66,15 +66,13 @@ test('plain-text wanted lists use the shared output title', () => {
 });
 
 test('shared text follows the exported page order and uses group headings', () => {
-  const card = cards.find((candidate) => candidate.name === 'Ferrous Forerunner');
-  assert.ok(card);
-  const secondCard = cards.find((candidate) => candidate.name === 'Ashe, Focused');
-  assert.ok(secondCard);
+  const card = wantedCard('Ferrous Forerunner').card;
+  const secondCard = wantedCard('Calm test card', { domains: ['Calm'] }).card;
   const output = formatExportedWantedText([
     { groupLabel: 'Calm', items: [{ card: secondCard, quantity: 1, fuzzySources: [] }] },
     { groupLabel: 'Fury', items: [{ card, quantity: 2, fuzzySources: [] }] },
   ], []);
-  assert.match(output, /CALM\n1x Ashe, Focused[\s\S]*FURY\n2x Ferrous Forerunner/);
+  assert.match(output, /CALM\n1x Calm test card[\s\S]*FURY\n2x Ferrous Forerunner/);
   assert.doesNotMatch(output, /Sorted by|Grouped by/);
 });
 
